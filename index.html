@@ -11,7 +11,7 @@
 :root{--bg:#f4f1ea;--fg:#222;--card:#fff;--ac:#4a7c59;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1b19;--fg:#eee;--card:#2a2926}}
 :root[data-theme="dark"]{--bg:#1c1b19;--fg:#eee;--card:#2a2926}
-html,body{margin:0}body{background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;min-height:100%;-webkit-tap-highlight-color:transparent}button,#bd,.s{ -webkit-tap-highlight-color:transparent}#bd .s:focus,#bd .s:focus-visible{outline:none}
+html,body{margin:0}body{background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;min-height:100%}
 [hidden]{display:none!important}
 .wrap{max-width:540px;margin:0 auto;padding:10px;display:flex;flex-direction:column;gap:5px}
 h1{margin:8px 0;text-align:center}
@@ -119,24 +119,11 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 #crp{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:25;background:var(--ac);color:#fff;border:0;border-radius:99px;padding:12px 20px;font-weight:700;box-shadow:0 4px 16px #0006}
 .crpin{width:100%;box-sizing:border-box;font:600 20px ui-monospace,monospace;letter-spacing:.3em;text-align:center;padding:10px;border-radius:8px;border:1px solid #8884;background:var(--bg);color:var(--fg)}
 #crerr{color:#d33;font-size:13px;min-height:16px}
-
-#accountBox{background:var(--card);border:1px solid #8883;border-radius:14px;padding:10px;margin:4px 0 8px;display:flex;flex-direction:column;gap:8px}
-#accountBox .acctrow{display:flex;align-items:center;gap:10px}
-#acctAvatar{width:46px;height:46px;border-radius:50%;object-fit:cover;background:var(--bg);border:1px solid #8885}
-#accountBox input{box-sizing:border-box;width:100%;padding:10px;border:1px solid #8885;border-radius:9px;background:var(--bg);color:var(--fg);font:inherit;margin:0 0 10px}
-#accountBox #acctPassHint{font-size:12px;opacity:.85;line-height:1.4;margin:0 0 12px;position:relative;display:block;clear:both;padding-top:2px;min-height:18px}
-#accountBox .acct-check{font-size:12px;line-height:1.35;margin:-5px 0 10px;min-height:16px;display:block}
-#accountBox .acct-check.ok{color:#4bb783}#accountBox .acct-check.bad{color:#e17a72}
-#accountBox .acctbuttons{display:flex;gap:6px}#accountBox .acctbuttons button{flex:1}
-#acctTest{display:flex;flex-direction:column;gap:10px}#acctTest button{text-align:left}
-#acctPassHint{font-size:12px;opacity:.8;line-height:1.35;margin:2px 0 4px;position:relative;display:block;clear:both}#acctPassStrength{height:5px;border-radius:8px;background:#8883;overflow:hidden}#acctPassStrength{display:none!important}#acctPassStrength span{display:block;height:100%;width:0%;transition:width .15s;background:var(--ac)}
+</style></head>
 </style></head><body>
 <div class="wrap">
 <div id="home" class="card">
 <h1 id="ttl">♞ Xadrez</h1><p class="sub" id="sbt">Escolha como quer jogar</p>
-<div id="accountBox"><div class="acctrow"><img id="acctAvatar" alt="Foto de perfil" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23888888'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle'%3E♟%3C/text%3E%3C/svg%3E"><div style="flex:1;min-width:0"><b id="acctName">Visitante</b><div id="acctInfo" style="font-size:12px;opacity:.75">Crie uma conta local para salvar seu perfil e elo.</div></div></div>
-<div id="acctForm"><input id="acctUser" maxlength="24" autocomplete="username" placeholder="Nome de usuário" oninput="acctCheckName()"><div id="acctNameCheck" class="acct-check" aria-live="polite"></div><input id="acctPass" type="password" minlength="8" autocomplete="new-password" placeholder="Senha (mínimo 8 caracteres)" oninput="acctPasswordHint();acctCheckPasswordReuse()"><div id="acctPassStrength"><span id="acctPassBar"></span></div><div id="acctPassHint">Use 8+ caracteres. Misture letras e números; símbolos só serão sugeridos se a senha continuar fraca.</div><div id="acctPassReuse" class="acct-check" aria-live="polite"></div><input id="acctEmail" type="email" autocomplete="email" placeholder="E-mail (opcional)"><label style="font-size:12px;display:flex;align-items:center;gap:8px">Foto de perfil (opcional) <input id="acctPhoto" type="file" accept="image/*" style="padding:5px;max-width:190px"></label><div class="acctbuttons"><button class="pr" onclick="acctRegister()">Criar conta</button><button onclick="acctLogin()">Entrar</button></div></div>
-<div id="acctSigned" hidden><div class="acctbuttons"><button onclick="acctEdit()">Editar perfil</button><button onclick="acctStartTest()">🎯 Teste de elo</button><button onclick="acctLogout()">Sair</button></div></div><div id="acctMsg" style="font-size:12px;color:var(--ac)"></div></div>
 <button id="rs" hidden onclick="resume()"></button>
 <div class="sec"><span>Modo</span><div class="seg" data-for="mode"><button data-v="bot"><b>🤖</b>Bot</button><button data-v="coach"><b>🎓</b>Professor</button><button data-v="2p"><b>👥</b>2 jogadores</button><button data-v="online"><b>🌐</b>Online</button></div></div>
 <div class="sec bo"><span>Você joga de</span><div class="seg" data-for="col"><button data-v="w">♔ Brancas</button><button data-v="b">♚ Pretas</button><button data-v="r">🎲 Aleatório</button></div></div>
@@ -159,7 +146,7 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 <div class="wrap" style="padding:0">
 <div id="gi"></div><div id="hist"></div>
 <div class="bar" id="top"></div><div id="fala" hidden></div>
-<div class="bw" style="position:relative"><div id="bd"></div><svg id="ar" viewBox="0 0 8 8" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible"></svg></div>
+<div class="bw" style="position:relative"><div id="bd"></div><svg id="ar" viewBox="0 0 8 8" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></svg></div>
 <div class="bar" id="bot"></div>
 <div id="st"></div>
 <div class="stack gm"><button onclick="undo()"><b>↶</b>Desfazer</button><button onclick="fl=!fl;render()"><b>⇅</b>Virar</button><button onclick="draw()"><b>½</b>Empate</button><button class="dg" onclick="resign()"><b>🏳️</b>Desistir</button><button onclick="openCfg()"><b>⚙️</b>Config</button><button onclick="leave()"><b>🏠</b>Menu</button></div></div></div></div>
@@ -360,6 +347,8 @@ let st=null, pressTimer=null, draggingPiece=false, draggingArrow=false;
 let x0=0,y0=0,pv=null,gh=null;
 
 const point=e=>sqAt(e);
+// Setas: contra o bot e no online. São só locais: nunca viajam pela rede, o oponente não vê.
+const arrowsOk=()=>cfg.mode=='bot'||cfg.mode=='online';
 const clearPress=()=>{if(pressTimer){clearTimeout(pressTimer);pressTimer=null}};
 const preventNextClick=()=>{
   suppressNextClick=true;
@@ -371,7 +360,6 @@ const makeArrow=(a,b)=>{
   const k=arrows.findIndex(x=>x.join()==v.join());
   if(k>=0)arrows.splice(k,1);else arrows.push(v);
   drawArrows();
-  if(cfg.mode==='online')netSend({t:'ar',a:v,rm:k>=0});
 };
 const moveGhost=e=>{
   if(!gh)return;
@@ -399,7 +387,7 @@ const beginPieceDrag=e=>{
 bd.addEventListener('contextmenu',e=>e.preventDefault());
 bd.addEventListener('pointerdown',e=>{
   if(e.button!==0&&e.button!==2)return;
-  if(e.button===2&&cfg.mode!='bot')return;
+  if(e.button===2&&!arrowsOk())return;
   const s=point(e);
   if(!s)return;
   suppressNextClick=false;
@@ -412,8 +400,8 @@ bd.addEventListener('pointerdown',e=>{
     clearPress();draggingArrow=true;pv=st.concat(st);drawArrows(pv);return;
   }
 
-  // Setas só no modo contra o bot.
-  if(cfg.mode!='bot')return;
+  // Setas por toque longo (bot e online).
+  if(!arrowsOk())return;
 
   // Holding briefly activates arrow drawing; moving immediately keeps normal piece dragging.
   pressTimer=setTimeout(()=>{
@@ -535,7 +523,7 @@ for(let i=0;i<8;i++)for(let j=0;j<8;j++){const r=fl?7-i:i,c=fl?7-j:j,p=S.b[r][c]
 e.className='s '+((r+c)%2?'d':'l')+(last&&((last[0]==r&&last[1]==c)||(last[2]==r&&last[3]==c))?' lm':'')+(sel&&sel[0]==r&&sel[1]==c?' sel':'')+(ic&&k[0]==r&&k[1]==c?' ck':'');
 const t=mv.find(m=>m.y==r&&m.x==c);if(t)e.className+=(p||t.e)?' cp':' mv';
 if(p)e.innerHTML=`<span class="p${p.t}">${G[p.k]}</span>`;if(j==0)e.insertAdjacentHTML('beforeend','<i class="rk">'+(8-r)+'</i>');if(i==7)e.insertAdjacentHTML('beforeend','<i class="fk">'+'abcdefgh'[c]+'</i>');e.onclick=()=>click(r,c);bd.appendChild(e)}
-if(anim&&!PF.anim)anim=null;if(anim){const sz=bd.clientWidth/8;anim.forEach(([r0,c0,r1,c1])=>{const i=fl?7-r1:r1,j=fl?7-c1:c1,q=bd.children[i*8+j],el=q&&q.firstChild;if(!el)return;const dx=((fl?7-c0:c0)-j)*sz,dy=((fl?7-r0:r0)-i)*sz;q.style.zIndex=2;el.style.position='relative';el.style.zIndex=2;el.style.display='inline-block';el.style.transition='none';el.style.transform=`translate(${dx}px,${dy}px)`;el.getBoundingClientRect();el.style.transition='transform .15s ease-out';el.style.transform='translate(0,0)'});anim=null}
+if(anim&&!PF.anim)anim=null;if(anim){const sz=bd.clientWidth/8;anim.forEach(([r0,c0,r1,c1])=>{const i=fl?7-r1:r1,j=fl?7-c1:c1,q=bd.children[i*8+j],el=q&&q.firstChild;if(!el)return;const dx=((fl?7-c0:c0)-j)*sz,dy=((fl?7-r0:r0)-i)*sz;q.style.zIndex=5;el.style.display='inline-block';el.style.transition='none';el.style.transform=`translate(${dx}px,${dy}px)`;el.getBoundingClientRect();el.style.transition='transform .15s ease-out';el.style.transform='translate(0,0)'});anim=null}
 drawArrows();const ts=fl?'w':'b',bs=fl?'b':'w';$('top').innerHTML=bar(ts);$('bot').innerHTML=bar(bs);
 $('top').classList.toggle('on',!over&&S.t==ts);$('bot').classList.toggle('on',!over&&S.t==bs);
 $('st').textContent=over?over.r+(over.w?': vitória das '+(over.w=='w'?'brancas':'pretas'):': empate'):thinking?(cfg.coach?cnm('coach','Professor'):cnm('bot','Bot'))+' pensando…':(ic?'Xeque! ':'')+'Vez das '+(S.t=='w'?'brancas':'pretas');
@@ -697,116 +685,4 @@ c.hide=Array.isArray(c.hide)?c.hide.map(String):[];return c}
 /* vigia durante partida online: se algo esconder ou distorcer o tabuleiro/barras, desliga o CSS livre */
 function cheatScan(){if(typeof getComputedStyle!='function'||cfg.mode!='online'||$('game').hidden||over||cssOff)return;
 const bad=[];[['bd','tabuleiro'],['top','barra do oponente'],['bot','sua barra'],['st','aviso de vez']].forEach(([id,n])=>{const e=$(id);if(!e)return;const q=getComputedStyle(e),r=e.getBoundingClientRect();
-if(q.display=='none'||q.visibility!='visible'||+q.opacity<.9||r.width<20||r.height<8||(q.transform&&q.transform!='none')||(q.filter&&q.filter!='none')||(q.clipPath&&q.clipPath!='none'))bad.push(n)});
-if(bad.length){cssOff=1;applyCU();modal('<b>⚠️ Interface alterada</b><div>Detectei algo escondendo ou distorcendo: '+bad.join(', ')+'. O CSS personalizado foi desligado nesta partida.</div><button onclick="$(\'md\').hidden=true">OK</button>','sm')}}
-setInterval(cheatScan,2500);
-function applyCU(){const c=cuClean(CU),L=[],D=[];
-if(c.bgL)L.push('--bg:'+c.bgL);if(c.cardL)L.push('--card:'+c.cardL);if(c.fgL)L.push('--fg:'+c.fgL);
-if(c.bgD)D.push('--bg:'+c.bgD);if(c.cardD)D.push('--card:'+c.cardD);if(c.fgD)D.push('--fg:'+c.fgD);
-let css='';
-if(L.length)css+=':root{'+L.join(';')+'}';
-if(D.length)css+='@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){'+D.join(';')+'}}:root[data-theme="dark"]{'+D.join(';')+'}';
-if(c.ac)css+=':root{--ac:'+c.ac+';--ac2:color-mix(in srgb,'+c.ac+' 72%,#000)}.seg button.on{box-shadow:0 2px 8px color-mix(in srgb,'+c.ac+' 35%,transparent)}';
-const bv=[];if(c.bl)bv.push('--bl:'+c.bl+'!important');if(c.bd2)bv.push('--bd2:'+c.bd2+'!important');if(bv.length)css+=':root{'+bv.join(';')+'}';
-if(c.lm)css+='.lm{background:'+c.lm+'!important}';if(c.sel)css+='.sel{background:'+c.sel+'!important}';if(c.ck)css+='.ck{background:'+c.ck+'!important}';
-if(c.pw)css+='.pw{color:'+c.pw+'}';if(c.pb)css+='.pb{color:'+c.pb+'}';
-if(c.font)css+='body,button,select,input,textarea{font-family:'+c.font+'}';
-if(c.rad!==undefined){const r=+c.rad||0;css+='.card,.bx,.cfb{border-radius:'+r*1.5+'px}.seg button,.stack button,#home>button,.bar,#fala,#st,#hist,#rs{border-radius:'+r+'px!important}#bd{border-radius:'+Math.round(r*.7)+'px}'}
-const live=!(cfg.mode=='online'&&!$('game').hidden)&&!cssOff;cssIssues=[];
-if(c.css){const r=cssCheck(c.css);if(!r.ok)cssIssues=r.issues;else if(live)css+='\n'+c.css;else cssIssues=['CSS livre fica desligado durante partidas online']}
-cst.textContent=css;
-const lg=c.logo!==undefined?c.logo:'♞',tt=c.title||'Xadrez';
-$('ttl').textContent=(lg?lg+' ':'')+tt;$('sbt').textContent=c.sub||'Escolha como quer jogar';document.title=tt;
-const hd=c.hide||[],vis=CMODES.filter(m=>!hd.includes(m));
-document.querySelectorAll('.seg[data-for=mode] button').forEach(b=>b.hidden=!!vis.length&&hd.includes(b.dataset.v));
-$('btu').hidden=hd.includes('tu');
-if(vis.length&&!vis.includes($('mode').value)){$('mode').value=vis[0];syncSeg()}}
-/* --- entrada protegida --- */
-const crHash=()=>OWNER_HASH||(()=>{try{return localStorage.getItem('xown')||''}catch(_){return''}})();
-function crTap(){const n=Date.now();if(n-crT0>2500)crN=0;crT0=n;if(++crN>=5){crN=0;crOpen()}}
-function crOpen(){closeCfg();if(crAuth){crShow();return}
-if(crHash())modal(`<b>🔐 Modo criador</b><input id="crpin" class="crpin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><div id="crerr"></div><div class="row"><button class="pr" onclick="crTry()">Entrar</button><button onclick="$('md').hidden=true">Cancelar</button></div>`,'sm');
-else crNewPinModal(0)}
-function crTry(){const e=$('crerr');if(Date.now()<crLock){e.textContent='Muitas tentativas. Aguarde um pouco.';return}
-if(pinHash($('crpin').value)===crHash()){crAuth=1;crFails=0;$('md').hidden=true;crShow()}
-else{e.textContent='PIN incorreto.';if(++crFails>=5){crLock=Date.now()+30000;crFails=0}}}
-function crNewPinModal(ch){modal(`<b>🔐 ${ch?'Trocar PIN':'Criar PIN do modo criador'}</b><div>Só quem souber o PIN abre o painel de customização.</div><input id="crpin" class="crpin" type="password" inputmode="numeric" autocomplete="off" placeholder="Novo PIN (mín. 4)"><input id="crpin2" class="crpin" type="password" inputmode="numeric" autocomplete="off" placeholder="Repita o PIN"><div id="crerr"></div><div class="row"><button class="pr" onclick="crSetPin(${ch})">Salvar</button><button onclick="$('md').hidden=true">Cancelar</button></div>`,'sm')}
-function crSetPin(ch){const a=$('crpin').value,b=$('crpin2').value,e=$('crerr');
-if(a.length<4){e.textContent='Use pelo menos 4 caracteres.';return}if(a!==b){e.textContent='Os PINs não são iguais.';return}
-try{localStorage.setItem('xown',pinHash(a))}catch(_){e.textContent='Não foi possível salvar neste navegador.';return}
-crAuth=1;$('md').hidden=true;if($('cr').hidden)crShow();else{crRender();crMsg(OWNER_HASH?'PIN salvo só neste aparelho. Para valer em todos, gere o código de trava e cole em OWNER_HASH.':'PIN salvo.')}}
-/* --- painel --- */
-const crMsg=t=>{$('crm').textContent=t};
-function crShow(){$('cr').hidden=false;$('crp').hidden=true;crRender()}
-function crClose(){$('cr').hidden=true;$('crp').hidden=true}
-function crPrev(on){$('cr').hidden=!!on;$('crp').hidden=!on}
-function crRender(){const b=$('crb'),y=b.scrollTop;b.innerHTML=crHtml();b.scrollTop=y}
-function crDef(k){const B=BC[PF.board]||BC.verde;return{ac:'#3f7d58',bgL:'#f1efe8',cardL:'#ffffff',fgL:'#222222',bgD:'#1c1b19',cardD:'#2a2926',fgD:'#eeeeee',bl:B[0],bd2:B[1],lm:'#cdd26a',sel:'#f6f669',ck:'#ee6666',pw:'#ffffff',pb:'#111111'}[k]}
-function crHtml(){const g=t=>`<div class="crh">${t}</div>`,
-tx=(k,l,d)=>`<div class="crr"><span>${l}</span><span class="crc"><input type="text" maxlength="40" value="${escH(CU[k]!==undefined?CU[k]:d)}" oninput="cuSet('${k}',this.value)"><button onclick="cuReset('${k}')" title="Voltar ao padrão">↺</button></span></div>`,
-co=(k,l)=>`<div class="crr"><span>${l}</span><span class="crc"><input type="color" value="${escH(CU[k]||crDef(k))}" oninput="cuSet('${k}',this.value)"><button onclick="cuReset('${k}')" title="Voltar ao padrão">↺</button></span></div>`,
-FT=[['','Padrão do sistema'],['Georgia,"Times New Roman",serif','Serifada'],['ui-monospace,Menlo,Consolas,monospace','Monoespaçada'],['"Trebuchet MS","Segoe UI",system-ui,sans-serif','Humanista'],['ui-rounded,"SF Pro Rounded",Nunito,system-ui,sans-serif','Arredondada'],['"Comic Sans MS","Marker Felt",cursive','Divertida']],
-hd=CU.hide||[],HB=[['bot','🤖 Bot'],['coach','🎓 Professor'],['2p','👥 2 jogadores'],['online','🌐 Online'],['tu','📚 Tutoriais']];
-return`<b style="font-size:20px">🛠️ Modo criador</b><div class="note">Só você vê isto. As mudanças valem na hora e ficam salvas neste aparelho. Para valerem para todo mundo, use "Exportar" e cole em <code>SITE_CONFIG</code> no arquivo.</div><div id="crm"></div>${cssIssues.length?`<div class="note" style="color:#d33">🚫 CSS livre bloqueado: ${escH(cssIssues.slice(0,4).join(" · "))}</div>`:''}
-<div class="row2"><button class="pr" onclick="crPrev(1)">👁 Ver o site</button><button onclick="crClose()">✔ Fechar</button></div>
-${g('Textos')}${tx('logo','Emoji / logo','♞')}${tx('title','Título','Xadrez')}${tx('sub','Subtítulo','Escolha como quer jogar')}${tx('n_me','Seu nome','Você')}${tx('n_opp','Oponente online','Oponente')}${tx('n_bot','Nome do bot','Bot')}${tx('n_coach','Nome do professor','Professor')}
-${g('Cores do site')}${co('ac','Destaque (botões)')}${co('bgL','Fundo · claro')}${co('cardL','Cartões · claro')}${co('fgL','Texto · claro')}${co('bgD','Fundo · escuro')}${co('cardD','Cartões · escuro')}${co('fgD','Texto · escuro')}
-${g('Tabuleiro e peças')}${co('bl','Casa clara')}${co('bd2','Casa escura')}${co('lm','Último lance')}${co('sel','Peça selecionada')}${co('ck','Rei em xeque')}${co('pw','Peças brancas')}${co('pb','Peças pretas')}
-${g('Estilo')}<div class="crr"><span>Fonte</span><select onchange="cuSet('font',this.value)">${FT.map(f=>`<option value="${escH(f[0])}"${(CU.font||'')==f[0]?' selected':''}>${f[1]}</option>`).join('')}</select></div>
-<div class="crr"><span>Arredondamento</span><span class="crc"><input type="range" min="0" max="28" value="${CU.rad!==undefined?+CU.rad:12}" oninput="cuSet('rad',+this.value)"><button onclick="cuReset('rad')" title="Voltar ao padrão">↺</button></span></div>
-${g('Esconder do menu')}${HB.map(h=>`<label class="crl"><input type="checkbox" ${hd.includes(h[0])?'checked':''} onchange="cuHide('${h[0]}',this.checked)"> ${h[1]}</label>`).join('')}
-${g('CSS avançado')}<div class="note">Só estilo visual: cores, bordas, sombras e fontes. Esconder, mover ou distorcer o tabuleiro, relógios e avisos é bloqueado, e o CSS livre fica desligado durante partidas online.</div><textarea rows="6" spellcheck="false" placeholder="/* seu CSS aqui */" oninput="cuSet('css',this.value)">${escH(CU.css||'')}</textarea>
-${g('Backup e segurança')}<textarea id="crj" rows="5" spellcheck="false" placeholder="Aqui aparece o JSON exportado. Para importar, cole aqui e toque em Importar."></textarea>
-<div class="row2"><button onclick="crExport()">📤 Exportar</button><button onclick="crImport()">📥 Importar</button><button onclick="crLockCode()">🔒 Código de trava</button><button onclick="crNewPinModal(1)">🔐 Trocar PIN</button><button class="dg" onclick="crResetAsk()">↺ Restaurar tudo</button><button onclick="crOut()">🚪 Sair</button></div>
-<div class="note">Dica: o PIN só esconde o painel de quem joga. Para trancar de verdade em todo aparelho, cole o "código de trava" em <code>OWNER_HASH</code>.</div>`}
-function crExport(){const j=JSON.stringify(CU,null,1);$('crj').value=j;try{navigator.clipboard.writeText(j).then(()=>crMsg('JSON copiado! Cole em SITE_CONFIG.'),()=>crMsg('JSON gerado abaixo.'))}catch(_){crMsg('JSON gerado abaixo.')}}
-function crImport(){let o;try{o=JSON.parse($('crj').value)}catch(_){crMsg('JSON inválido.');return}if(!o||typeof o!='object'||Array.isArray(o)){crMsg('JSON inválido.');return}CL=o;saveCU();crRender();crMsg('Importado!')}
-function crLockCode(){if(OWNER_HASH){crMsg('OWNER_HASH já está definido no arquivo.');return}const h=(()=>{try{return localStorage.getItem('xown')||''}catch(_){return''}})();if(!h){crMsg('Crie um PIN primeiro.');return}
-const t="const OWNER_HASH='"+h+"';";$('crj').value=t;try{navigator.clipboard.writeText(t).then(()=>crMsg('Copiado! Substitua a linha OWNER_HASH no arquivo.'),()=>crMsg('Código gerado abaixo.'))}catch(_){crMsg('Código gerado abaixo.')}}
-function crResetAsk(){modal(`<b>Restaurar tudo?</b><div>Apaga todas as customizações deste aparelho.</div><div class="row"><button class="pr" onclick="crReset()">Restaurar</button><button onclick="$('md').hidden=true">Cancelar</button></div>`,'sm')}
-function crReset(){CL={};saveCU();$('md').hidden=true;crRender();crMsg('Tudo restaurado.')}
-function crOut(){crAuth=0;crClose()}
-function hashJoin(){const m=location.hash.replace('#','').toUpperCase();
-if(!/^[A-HJ-NP-Z2-9]{4,8}$/.test(m)||!$('game').hidden||!$('tu').hidden)return;
-$('mode').value='online';syncSeg();$('ocd').value=m;joinRoom();try{history.replaceState(null,'',location.href.split('#')[0])}catch(_){}}
-addEventListener('hashchange',hashJoin);
-let dip=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;$('ins').hidden=false});
-addEventListener('appinstalled',()=>{$('ins').hidden=true});
-function instalar(){if(!dip)return;dip.prompt();dip=null;$('ins').hidden=true}
-if('serviceWorker'in navigator&&/^https?:/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-
-// Contas locais: armazenadas somente neste navegador/aparelho.
-const ACCT_KEY='xchess_local_accounts_v1', SESSION_KEY='xchess_local_session_v1';
-let acctCurrent=null, acctPhotoData='';
-function acctRead(){try{return JSON.parse(localStorage.getItem(ACCT_KEY)||'{}')}catch(_){return {}}}
-async function acctHash(str,salt){if(!crypto.subtle)throw Error('Este navegador não oferece criptografia segura para senhas. Abra o arquivo em um navegador compatível.');const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(str),'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:Uint8Array.from(atob(salt),c=>c.charCodeAt(0)),iterations:150000,hash:'SHA-256'},key,256);return Array.from(new Uint8Array(bits),b=>b.toString(16).padStart(2,'0')).join('')}
-function acctSalt(){const b=crypto.getRandomValues(new Uint8Array(16));return btoa(String.fromCharCode(...b))}
-function acctMsg(t){$('acctMsg').textContent=t}
-let acctReuseTimer=0,acctReuseRun=0;
-function acctCheckName(){const name=$('acctUser').value.trim(),el=$('acctNameCheck');if(!el)return;el.className='acct-check';if(name.length<2){el.textContent='';return}const a=acctRead(),key=name.toLowerCase();if(a[key]){el.textContent='Este nome já está em uso neste aparelho. Use Entrar ou escolha outro.';el.classList.add('bad')}else{el.textContent='Nome disponível neste aparelho.';el.classList.add('ok')}}
-function acctCheckPasswordReuse(){const pass=$('acctPass').value,el=$('acctPassReuse');if(!el)return;clearTimeout(acctReuseTimer);const run=++acctReuseRun;el.className='acct-check';if(!pass){el.textContent='';return}if(pass.length<8){el.textContent='';return}el.textContent='Verificando se esta senha já foi usada…';acctReuseTimer=setTimeout(async()=>{try{const accounts=Object.values(acctRead());for(const u of accounts){if(run!==acctReuseRun)return;if(u&&u.passSalt&&u.passHash&&await acctHash(pass,u.passSalt)===u.passHash){el.textContent='Esta senha já é usada por uma conta neste aparelho. Escolha outra.';el.classList.add('bad');return}}if(run===acctReuseRun){el.textContent='Senha não encontrada nas outras contas deste aparelho.';el.classList.add('ok')}}catch(_){if(run===acctReuseRun)el.textContent='Não foi possível verificar senhas repetidas agora.'}},450)}
-function acctPasswordScore(pass){
- const classes=[/[a-z]/.test(pass),/[A-Z]/.test(pass),/[0-9]/.test(pass),/[^A-Za-z0-9]/.test(pass)].filter(Boolean).length;
- let score=0;if(pass.length>=8)score++;if(pass.length>=12)score++;if(classes>=2)score++;if(classes>=3)score++;if(classes>=4)score++;
- return {score,classes,strong:pass.length>=8&&((pass.length>=12&&classes>=2)||(pass.length>=8&&classes>=3))};
-}
-function acctPasswordHint(){const pass=$('acctPass').value,el=$('acctPassHint'),bar=$('acctPassBar');if(!el||!bar)return;const r=acctPasswordScore(pass),labels=['Muito fraca','Fraca','Razoável','Boa','Forte','Muito forte'];bar.style.width=(r.score/5*100)+'%';bar.style.background=r.score<2?'#d9534f':r.score<4?'#d9a227':'#2eaa68';if(!pass){el.textContent='Use 8+ caracteres. Misture letras e números; símbolos só serão sugeridos se a senha continuar fraca.';return}if(pass.length<8)el.textContent='Faltam '+(8-pass.length)+' caracteres para o mínimo de 8.';else if(r.strong)el.textContent='Senha '+labels[r.score]+'. Pode usar sem símbolos — essa combinação já é aceitável.';else el.textContent='Senha '+labels[r.score]+'. Para fortalecê-la, aumente o tamanho ou adicione '+(r.classes<3?'letras maiúsculas/minúsculas e números':'um símbolo, como ! ou @')+'.';}
-function acctPaint(){const f=$('acctForm'),z=$('acctSigned');if(!acctCurrent){$('acctName').textContent='Visitante';$('acctInfo').textContent='Crie uma conta local para salvar seu perfil e elo.';$('acctAvatar').src=acctPhotoData||$('acctAvatar').src;f.hidden=false;z.hidden=true;return}f.hidden=true;z.hidden=false;$('acctName').textContent=acctCurrent.name;$('acctInfo').textContent='Elo estimado: '+(acctCurrent.elo||'Não avaliado')+' · '+(acctCurrent.email||'Sem e-mail');$('acctAvatar').src=acctCurrent.photo||$('acctAvatar').src;$('acctEmail').value=acctCurrent.email||''}
-function acctSave(){const a=acctRead();a[acctCurrent.name.toLowerCase()]=acctCurrent;localStorage.setItem(ACCT_KEY,JSON.stringify(a));localStorage.setItem(SESSION_KEY,acctCurrent.name.toLowerCase());acctPaint()}
-async function acctRegister(){const name=$('acctUser').value.trim(),pass=$('acctPass').value,email=$('acctEmail').value.trim();if(name.length<2){acctMsg('O nome precisa ter pelo menos 2 caracteres.');return}if(pass.length<8){acctMsg('A senha precisa ter pelo menos 8 caracteres.');return}const strength=acctPasswordScore(pass);if(!strength.strong){acctMsg('Senha ainda fraca. Use 8+ caracteres e misture pelo menos 3 tipos: minúsculas, maiúsculas, números ou símbolos. Símbolo só é necessário se ajudar a fortalecer a combinação.');acctPasswordHint();return}if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){acctMsg('Confira o e-mail ou deixe-o vazio.');return}const a=acctRead(),key=name.toLowerCase();if(a[key]){acctMsg('Esse nome já existe neste aparelho. Use Entrar ou escolha outro nome.');acctCheckName();return}for(const existing of Object.values(a)){if(existing&&existing.passSalt&&existing.passHash&&await acctHash(pass,existing.passSalt)===existing.passHash){acctMsg('Essa senha já está sendo usada por outra conta neste aparelho. Escolha uma senha diferente.');acctCheckPasswordReuse();return}}const p=acctPhotoData||'';try{const passSalt=acctSalt(),passHash=await acctHash(pass,passSalt);acctCurrent={name,passSalt,passHash,email,photo:p,elo:null,testDone:false,created:Date.now()};acctSave();$('acctPass').value='';acctPasswordHint();acctMsg('Conta criada neste aparelho! Faça o teste de elo quando quiser.')}catch(e){acctMsg(e.message||'Não foi possível proteger a senha neste navegador.')}}
-async function acctLogin(){const name=$('acctUser').value.trim(),pass=$('acctPass').value,a=acctRead(),key=name.toLowerCase(),u=a[key];try{if(!u||!u.passSalt||u.passHash!==await acctHash(pass,u.passSalt)){acctMsg('Nome ou senha incorretos.');return}acctCurrent=u;localStorage.setItem(SESSION_KEY,key);$('acctPass').value='';acctPasswordHint();acctPaint();acctMsg('Login realizado!')}catch(e){acctMsg(e.message||'Não foi possível verificar a senha.')}}
-function acctLogout(){acctCurrent=null;localStorage.removeItem(SESSION_KEY);acctPaint();acctMsg('Você saiu da conta local.')}
-function acctEdit(){const name=prompt('Nome de exibição:',acctCurrent.name);if(name===null)return;if(name.trim().length<2){acctMsg('Nome muito curto.');return}const email=prompt('E-mail opcional:',acctCurrent.email||'');if(email===null)return;if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){acctMsg('E-mail inválido.');return}const old=acctCurrent.name.toLowerCase();acctCurrent.name=name.trim();acctCurrent.email=email.trim();const a=acctRead();delete a[old];a[acctCurrent.name.toLowerCase()]=acctCurrent;localStorage.setItem(ACCT_KEY,JSON.stringify(a));localStorage.setItem(SESSION_KEY,acctCurrent.name.toLowerCase());acctPaint();acctMsg('Perfil atualizado.')}
-$('acctPhoto').addEventListener('change',e=>{const file=e.target.files&&e.target.files[0];if(!file)return;if(file.size>2*1024*1024){acctMsg('A foto deve ter até 2 MB.');e.target.value='';return}const rd=new FileReader();rd.onload=()=>{acctPhotoData=rd.result;if(acctCurrent){acctCurrent.photo=acctPhotoData;acctSave()}else $('acctAvatar').src=acctPhotoData};rd.readAsDataURL(file)});
-const acctQuestions=[
-{q:'Qual peça pode saltar por cima das outras?',a:['Torre','Cavalo','Bispo','Peão'],c:1},
-{q:'No início da partida, quantas casas o peão pode avançar no primeiro lance?',a:['Só uma, sempre','Até três','Uma ou duas','Qualquer número'],c:2},
-{q:'O que é xeque-mate?',a:['O rei está atacado e não há defesa legal','Capturar a dama','Empatar a partida','Promover um peão'],c:0},
-{q:'Qual é a melhor ideia geral na abertura?',a:['Mover a mesma peça várias vezes sem motivo','Desenvolver peças e disputar o centro','Sair com a dama e atacar sozinho','Deixar o rei no centro para sempre'],c:1},
-{q:'Quando o rei está em xeque, você deve...',a:['Ignorar o xeque','Fazer qualquer lance','Resolver o xeque com um lance legal','Mover a dama obrigatoriamente'],c:2}
-];
-function acctStartTest(){if(!acctCurrent){acctMsg('Entre ou crie uma conta primeiro.');return}const order=acctQuestions.map((_,i)=>i).sort(()=>Math.random()-.5);let at=0,score=0;function show(){if(at>=order.length){const elo=[400,600,800,1000,1200,1400][score];acctCurrent.elo=elo;acctCurrent.testDone=true;acctSave();$('md').hidden=true;acctMsg('Teste concluído: '+score+'/'+acctQuestions.length+' acertos. Elo estimado: '+elo+'. É uma estimativa inicial, não uma classificação oficial.');return}const q=acctQuestions[order[at]];$('md').innerHTML=`<div class="cfb"><b>🎯 Teste de colocação · ${at+1}/${order.length}</b><div>${q.q}</div><div id="acctTest">${q.a.map((x,i)=>`<button onclick="acctAnswer(${i})">${String.fromCharCode(65+i)}. ${x}</button>`).join('')}</div><div style="font-size:12px;opacity:.7">Responda sem pesquisar para ter uma estimativa mais útil.</div><button onclick="$('md').hidden=true">Cancelar</button></div>`;$('md').hidden=false;window.acctAnswer=(i)=>{if(i===q.c)score++;at++;show()}}show()}
-(function acctInit(){try{const key=localStorage.getItem(SESSION_KEY),a=acctRead();if(key&&a[key])acctCurrent=a[key];acctPaint();acctCheckName()}catch(_){acctMsg('O navegador bloqueou o armazenamento local.');}})();
-
-loadPF();applyPF();syncPF();syncSeg();updRs();$('sb').textContent=snd?'🔊 Som ligado':'🔇 Som desligado';loadCU();applyCU();hashJoin();
-</script></body></html>
+if(q.display=='none'||q.visibility!='visible'||+q.opacity<.9||r.width<20||r.height<8||(q
