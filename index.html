@@ -233,7 +233,7 @@ function updRs(){let d=null;try{d=JSON.parse(localStorage.getItem('xchess'))}cat
 function resume(){let d=null;try{d=JSON.parse(localStorage.getItem('xchess'))}catch(_){}if(!d)return;cfg=d.cfg;S=init();cm=null;cmsg='';H=[];sel=null;mv=[];arrows=[];last=null;over=null;thinking=0;rp=1;
 for(const q of d.mv){const m=legal(S).find(x=>x.r==q[0]&&x.f==q[1]&&x.y==q[2]&&x.x==q[3]);if(!m)break;play(m,q[4]);if(q[5]){const hh=H[H.length-1];hh.q=q[5];hh.n+=q[5].nag;hh.e+=q[5].nag}}
 rp=0;anim=null;clk=d.clk;fl=d.fl;$('home').hidden=true;$('game').hidden=false;$('md').hidden=true;clearInterval(ti);if(cfg.tm)ti=setInterval(tick,100);render();botGo()}
-function pgn(){const d=new Date(),dt=d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0'),bt=cfg.mode=='bot',bn=(cfg.coach?'Professor':'Bot')+' (nível '+cfg.lv+')',w=bt?(cfg.me=='w'?'Você':bn):'Jogador 1',b=bt?(cfg.me=='b'?'Você':bn):'Jogador 2',res=over?(over.w?(over.w=='w'?'1-0':'0-1'):'1/2-1/2'):'*';
+function pgn(){const d=new Date(),dt=d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0'),bt=cfg.mode=='bot'||cfg.mode=='online',bn=cfg.mode=='online'?'Oponente':(cfg.coach?'Professor':'Bot')+' (nível '+cfg.lv+')',w=bt?(cfg.me=='w'?'Você':bn):'Jogador 1',b=bt?(cfg.me=='b'?'Você':bn):'Jogador 2',res=over?(over.w?(over.w=='w'?'1-0':'0-1'):'1/2-1/2'):'*';
 return`[Event "Xadrez"]\n[Site "?"]\n[Date "${dt}"]\n[Round "-"]\n[White "${w}"]\n[Black "${b}"]\n[Result "${res}"]\n`+(cfg.tm?`[TimeControl "${cfg.tm}"]\n`:'')+(over?`[Termination "${over.r}"]\n`:'')+'\n'+H.map((x,i)=>(i%2?'':(i/2+1)+'. ')+x.e).join(' ')+' '+res+'\n'}
 function showPgn(){modal(`<b>PGN</b><textarea id="pg" readonly style="width:100%;box-sizing:border-box;height:130px;font:12px ui-monospace,monospace;background:var(--bg);color:var(--fg);border:1px solid #8884;border-radius:8px;padding:6px">${pgn()}</textarea><div class="row"><button onclick="cpPgn(event)">Copiar</button><button onclick="dlPgn()">Baixar .pgn</button></div><button onclick="$('md').hidden=true">Fechar</button>`,'sm')}
 function cpPgn(ev){const t=$('pg');t.select();t.setSelectionRange(0,1e6);let ok=0;try{ok=document.execCommand('copy')}catch(_){}if(!ok&&navigator.clipboard)navigator.clipboard.writeText(t.value).catch(()=>{});ev.target.textContent='Copiado ✓'}
@@ -254,7 +254,7 @@ $('home').hidden=true;$('game').hidden=false;$('md').hidden=true;clearInterval(t
 function home(){onlReset();updRs();clearInterval(ti);thinking=0;$('md').hidden=true;$('game').hidden=true;$('home').hidden=false;cssOff=0;applyCU()}
 const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
 const cid=s=>s==(fl?'w':'b')?'ct':'cb';
-function tick(){if(over||thinking&&0||netPaused)return;clk[S.t]-=.1;if(clk[S.t]<=0){clk[S.t]=0;const o=S.t=='w'?'b':'w';over=lone(S.b,o)?{w:0,r:'Tempo esgotado (material insuficiente)'}:{w:o,r:'Tempo esgotado'};render();return}if(clk[S.t]<10&&Math.ceil(clk[S.t])<Math.ceil(clk[S.t]+.1)&&(cfg.mode!='bot'||S.t==cfg.me))beep(900,.05,'square',.06);
+function tick(){if(over||thinking&&0||netPaused)return;clk[S.t]-=.1;if(clk[S.t]<=0){clk[S.t]=0;if(cfg.mode=='online'&&S.t!=cfg.me){const e=$(cid(S.t));if(e)e.textContent=fmt(0);return}const o=S.t=='w'?'b':'w';over=lone(S.b,o)?{w:0,r:'Tempo esgotado (material insuficiente)'}:{w:o,r:'Tempo esgotado'};if(cfg.mode=='online')netSend({t:'to'});render();return}if(clk[S.t]<10&&Math.ceil(clk[S.t])<Math.ceil(clk[S.t]+.1)&&(cfg.mode!='bot'||S.t==cfg.me))beep(900,.05,'square',.06);
 for(const s of['w','b']){const e=$(cid(s));if(e){e.textContent=fmt(clk[s]);e.classList.toggle('lo',clk[s]<20)}}}
 function click(r,c){
 if(typeof arrows!=='undefined'&&arrows.length){arrows=[];if(typeof drawArrows==='function')drawArrows();}
@@ -262,7 +262,7 @@ if(suppressNextClick){suppressNextClick=false;return}if(Date.now()<nc)return;if(
 if(sel){const m=mv.find(m=>m.y==r&&m.x==c);if(m){if(m.pr){pend=m;modal('<b>Promover para:</b><div class="row">'+['q','r','b','n'].map(k=>`<button class="p${S.t}" onclick="pk('${k}')">${G[k]}</button>`).join('')+'</div>','pm');return}return go(m)}}
 if(p&&p.t==S.t){sel=[r,c];mv=legal(S).filter(m=>m.r==r&&m.f==c)}else{sel=null;mv=[]}render()}
 function pk(k){$('md').hidden=true;go(pend,k)}
-function go(m,k){if(cfg.mode=='online')netSend({t:'mv',r:m.r,f:m.f,y:m.y,x:m.x,k:k||null});play(m,k)}
+function go(m,k){if(cfg.mode=='online')netSend({t:'mv',r:m.r,f:m.f,y:m.y,x:m.x,k:k||null,c:cfg.tm?+clk[S.t].toFixed(2):null});play(m,k)}
 function play(m,k){const pre=S,mine=!!cfg.coach&&!rp&&S.t==cfg.me;let an=null;
 const mover=S.b[m.r][m.f],cp=S.b[m.y][m.x]||(m.e?S.b[m.r][m.x]:null),ns=ap(S,m,k),ft='abcdefgh';
 const dz=(()=>{if(mover.k=='p'||mover.k=='k')return'';const o=legal(S).filter(x=>x.y==m.y&&x.x==m.x&&S.b[x.r][x.f].k==mover.k&&(x.r!=m.r||x.f!=m.f));if(!o.length)return'';const a1=o.some(x=>x.f==m.f),a2=o.some(x=>x.r==m.r);return!a1?ft[m.f]:!a2?''+(8-m.r):ft[m.f]+(8-m.r)})();
@@ -573,11 +573,12 @@ setTimeout(()=>{if(!done&&!p.open)retry()},8000)}
 function netBack(){rcStop();$('md').hidden=true;netSend({t:'sync',mv:movesList(),clk});render()}
 const movesList=()=>H.map(x=>x.lm.concat([x.pk||null]));
 setInterval(()=>{if(!net||!net.open)return;netSend({t:'p'});if(!$('game').hidden&&cfg.mode=='online'&&!over&&Date.now()-lastRx>12000){const c=net;try{c.close()}catch(_){}lost(c)}},3000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&net&&!net.open&&cfg.mode=='online'&&!$('game').hidden&&!over)lost(net)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)lastRx=Date.now();if(!document.hidden&&net&&!net.open&&cfg.mode=='online'&&!$('game').hidden&&!over)lost(net)});
 function createRoom(){
 if(!needPeer())return;netClose();isHost=true;roomCode=genCode();tok=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
 const p=peer=new Peer('xadrez-'+roomCode);
 $('onm').hidden=true;$('onc').hidden=false;$('oco').textContent=roomCode;onlSt('Conectando…');
+setTimeout(()=>{if(peer===p&&!p.open)onlSt('⚠️ Não consegui falar com o servidor. Verifique a internet e tente de novo.')},12000);
 p.on('open',()=>{if(peer===p)onlSt('Aguardando o outro jogador…')});
 p.on('disconnected',()=>{setTimeout(()=>{if(peer===p&&!p.destroyed){try{p.reconnect()}catch(_){}}},2000)});
 p.on('error',e=>{if(peer!==p)return;if(e.type=='unavailable-id'){createRoom();return}if(e.type=='network'||e.type=='server-error'||e.type=='socket-error'||e.type=='socket-closed')return;onlSt('⚠️ Erro de conexão ('+e.type+')')});
@@ -596,6 +597,7 @@ if(!needPeer())return;const code=$('ocd').value.toUpperCase().replace(/[^A-Z0-9]
 if(code.length<4){onlSt('Digite o código da sala.');return}
 netClose();isHost=false;roomCode=code;onlSt('Conectando…');
 const p=peer=new Peer();
+setTimeout(()=>{if(peer===p&&!p.open)onlSt('⚠️ Não consegui falar com o servidor. Verifique a internet e tente de novo.')},12000);
 p.on('error',e=>{if(peer!==p)return;onlSt(e.type=='peer-unavailable'?'⚠️ Sala não encontrada. Confira o código.':'⚠️ Erro de conexão ('+e.type+')')});
 p.on('open',()=>{if(peer!==p)return;const c=p.connect('xadrez-'+code,{reliable:true});net=c;hookConn(c);
 c.on('open',()=>{if(net===c)onlSt('Conectado! Iniciando a partida…')});
@@ -611,14 +613,15 @@ if(d.t=='cfg'&&!isHost&&$('game').hidden){tok=String(d.tok||'');cfg={mode:'onlin
 if(cfg.mode!='online'||$('game').hidden)return;
 if(d.t=='mv'){if(over||S.t==cfg.me)return;
 const m=legal(S).find(x=>x.r==d.r&&x.f==d.f&&x.y==d.y&&x.x==d.x);if(!m)return;
-sel=null;mv=[];play(m,m.pr?(['q','r','b','n'].includes(d.k)?d.k:'q'):undefined)}
+const mc=S.t;sel=null;mv=[];play(m,m.pr?(['q','r','b','n'].includes(d.k)?d.k:'q'):undefined);if(cfg.tm&&typeof d.c=='number'&&d.c>=0&&d.c<=cfg.tm)clk[mc]=d.c}
 else if(d.t=='resign')resign(1,1);
+else if(d.t=='to'){if(!over&&S.t!=cfg.me){clk[S.t]=0;const o=cfg.me;over=lone(S.b,o)?{w:0,r:'Tempo esgotado (material insuficiente)'}:{w:o,r:'Tempo esgotado'};render()}}
 else if(d.t=='bye'){if(!over){const c=net;net=null;rcStop();gone('O oponente saiu','Ele encerrou a partida.')}}
 else if(d.t=='sync'&&Array.isArray(d.mv)){
 for(let i=H.length;i<d.mv.length&&i<800;i++){const q=d.mv[i]||[],m=legal(S).find(x=>x.r==q[0]&&x.f==q[1]&&x.y==q[2]&&x.x==q[3]);if(!m)break;sel=null;mv=[];play(m,m.pr?(['q','r','b','n'].includes(q[4])?q[4]:'q'):undefined)}
-if(!isHost&&cfg.tm&&d.clk&&+d.clk.w>=0&&+d.clk.b>=0){clk={w:+d.clk.w,b:+d.clk.b}}render()}
+if(cfg.tm&&d.clk){const o=cfg.me=='w'?'b':'w',v=+d.clk[o];if(v>=0&&v<=cfg.tm)clk[o]=v}render()}
 else if(d.t=='rq'&&RQ[d.k]){
-if(d.k=='rm'&&asked.rm){asked.rm=0;netSend({t:'ans',k:'rm',y:1});netDo('rm');return}
+if(asked[d.k]){asked[d.k]=0;netSend({t:'ans',k:d.k,y:1});netDo(d.k);return}
 if((d.k=='draw'&&over)||(d.k=='undo'&&!H.length)||(d.k=='rm'&&!over))return;
 modal(`<b>O oponente ${RQ[d.k]}</b><div>Você aceita?</div><div class="row"><button class="pr" onclick="netAns('${d.k}',1)">Aceitar</button><button onclick="netAns('${d.k}',0)">Recusar</button></div>`,'sm')}
 else if(d.t=='ans'&&asked[d.k]){asked[d.k]=0;
@@ -679,10 +682,4 @@ walk(css);return{ok:!iss.length,issues:iss}}
 /* valores vindos de importação/SITE_CONFIG também passam por limpeza (evita injetar CSS por uma "cor") */
 const CCOL=['ac','bgL','cardL','fgL','bgD','cardD','fgD','bl','bd2','lm','sel','ck','pw','pb'];
 function cuClean(o){const c=Object.assign({},o);CCOL.forEach(k=>{if(c[k]!==undefined&&!/^#[0-9a-f]{6}$/i.test(String(c[k])))delete c[k]});
-if(c.font!==undefined&&!(typeof c.font=='string'&&/^[\w\s,"'.-]{1,120}$/.test(c.font)))delete c.font;
-if(c.rad!==undefined){const r=+c.rad;if(isFinite(r))c.rad=Math.max(0,Math.min(28,r));else delete c.rad}
-c.hide=Array.isArray(c.hide)?c.hide.map(String):[];return c}
-/* vigia durante partida online: se algo esconder ou distorcer o tabuleiro/barras, desliga o CSS livre */
-function cheatScan(){if(typeof getComputedStyle!='function'||cfg.mode!='online'||$('game').hidden||over||cssOff)return;
-const bad=[];[['bd','tabuleiro'],['top','barra do oponente'],['bot','sua barra'],['st','aviso de vez']].forEach(([id,n])=>{const e=$(id);if(!e)return;const q=getComputedStyle(e),r=e.getBoundingClientRect();
-if(q.display=='none'||q.visibility!='visible'||+q.opacity<.9||r.width<20||r.height<8||(q
+if(c.font!==undefined&&!(typeo
