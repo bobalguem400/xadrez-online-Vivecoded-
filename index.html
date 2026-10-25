@@ -371,6 +371,7 @@ const makeArrow=(a,b)=>{
   const k=arrows.findIndex(x=>x.join()==v.join());
   if(k>=0)arrows.splice(k,1);else arrows.push(v);
   drawArrows();
+  if(cfg.mode==='online')netSend({t:'ar',a:v,rm:k>=0});
 };
 const moveGhost=e=>{
   if(!gh)return;
