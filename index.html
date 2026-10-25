@@ -360,8 +360,6 @@ let st=null, pressTimer=null, draggingPiece=false, draggingArrow=false;
 let x0=0,y0=0,pv=null,gh=null;
 
 const point=e=>sqAt(e);
-// Setas: contra o bot e no online. São só locais: nunca viajam pela rede, o oponente não vê.
-const arrowsOk=()=>cfg.mode=='bot'||cfg.mode=='online';
 const clearPress=()=>{if(pressTimer){clearTimeout(pressTimer);pressTimer=null}};
 const preventNextClick=()=>{
   suppressNextClick=true;
@@ -398,9 +396,10 @@ const beginPieceDrag=e=>{
 };
 
 bd.addEventListener('contextmenu',e=>e.preventDefault());
+const arrowsOn=()=>cfg.mode=='bot'||cfg.mode=='online';
 bd.addEventListener('pointerdown',e=>{
   if(e.button!==0&&e.button!==2)return;
-  if(e.button===2&&!arrowsOk())return;
+  if(e.button===2&&!arrowsOn())return;
   const s=point(e);
   if(!s)return;
   suppressNextClick=false;
@@ -413,13 +412,10 @@ bd.addEventListener('pointerdown',e=>{
     clearPress();draggingArrow=true;pv=st.concat(st);drawArrows(pv);return;
   }
 
-  // Setas por toque longo (bot e online).
-  if(!arrowsOk())return;
-
   // Holding briefly activates arrow drawing; moving immediately keeps normal piece dragging.
   pressTimer=setTimeout(()=>{
     pressTimer=null;
-    if(!st||draggingPiece)return;
+    if(!st||draggingPiece||!arrowsOn())return;
     draggingArrow=true;
     try{navigator.vibrate&&navigator.vibrate(18)}catch(_){}
     pv=st.concat(st);
@@ -665,4 +661,5 @@ let cssOff=0,cssIssues=[];
 const CS_LEN=/^(#home|#tu|#tub|#ttl|#sbt|#pl|#btu|#ins|#rs|#onl|h1|\.sub)(?![\w-])/,
 CS_OKP=new Set(['color','background','background-color','background-image','border','border-color','border-width','border-style','border-radius','border-top','border-right','border-bottom','border-left','border-top-color','border-right-color','border-bottom-color','border-left-color','box-shadow','text-shadow','outline','outline-color','outline-style','outline-width','outline-offset','font-family','font-weight','font-style','letter-spacing','text-transform','text-decoration','text-align','cursor','accent-color','caret-color','scrollbar-color','color-scheme','-webkit-text-stroke','-webkit-text-stroke-color','-webkit-text-stroke-width']),
 CS_BADP=new Set(['display','visibility','position','z-index','pointer-events','content','top','left','right','bottom','inset','opacity','transform','filter','clip','clip-path','mask','zoom']),
-CS_VARS=new Set(['--ac','--ac2','--
+CS_VARS=new Set(['--ac','--ac2','--bg','--card','--fg','--bl','--bd2']),
+CS_BADV=/url\s*\(|image-set|@import|expression|javascript:|vbscript:|behavior|binding|attr\s*\(|element\s*\(|pai
