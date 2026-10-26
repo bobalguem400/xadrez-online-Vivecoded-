@@ -133,7 +133,7 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 </style></head><body>
 <div class="wrap">
 <div id="home" class="card">
-<h1 id="ttl">♞ Xadrez</h1><p class="sub" id="sbt">Escolha como quer jogar</p>
+<h1 id="ttl" onclick="crTap()">♞ Xadrez</h1><p class="sub" id="sbt">Escolha como quer jogar</p>
 <div id="accountBox"><div class="acctrow"><img id="acctAvatar" alt="Foto de perfil" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23888888'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle'%3E♟%3C/text%3E%3C/svg%3E"><div style="flex:1;min-width:0"><b id="acctName">Visitante</b><div id="acctInfo" style="font-size:12px;opacity:.75">Crie uma conta local para salvar seu perfil e elo.</div></div></div>
 <div id="acctForm"><input id="acctUser" maxlength="24" autocomplete="username" placeholder="Nome de usuário" oninput="acctCheckName()"><div id="acctNameCheck" class="acct-check" aria-live="polite"></div><input id="acctPass" type="password" minlength="8" autocomplete="new-password" placeholder="Senha (mínimo 8 caracteres)" oninput="acctPasswordHint();acctCheckPasswordReuse()"><div id="acctPassStrength"><span id="acctPassBar"></span></div><div id="acctPassHint">Use 8+ caracteres. Misture letras e números; símbolos só serão sugeridos se a senha continuar fraca.</div><div id="acctPassReuse" class="acct-check" aria-live="polite"></div><input id="acctEmail" type="email" autocomplete="email" placeholder="E-mail (opcional)"><label style="font-size:12px;display:flex;align-items:center;gap:8px">Foto de perfil (opcional) <input id="acctPhoto" type="file" accept="image/*" style="padding:5px;max-width:190px"></label><div class="acctbuttons"><button class="pr" onclick="acctRegister()">Criar conta</button><button onclick="acctLogin()">Entrar</button></div></div>
 <div id="acctSigned" hidden><div class="acctbuttons"><button onclick="acctEdit()">Editar perfil</button><button onclick="acctStartTest()">🎯 Teste de elo</button><button onclick="acctLogout()">Sair</button></div></div><div id="acctMsg" style="font-size:12px;color:var(--ac)"></div></div>
@@ -236,7 +236,7 @@ function insuf(b){const a=[];b.forEach((r,y)=>r.forEach((p,x)=>p&&p.k!='k'&&a.pu
 const lone=(b,t)=>{const a=[];b.forEach(r=>r.forEach(p=>p&&p.t==t&&p.k!='k'&&a.push(p.k)));return!a.length||(a.length==1&&(a[0]=='n'||a[0]=='b'))};
 const PE={k:'K',q:'Q',r:'R',b:'B',n:'N',p:''};
 const key=s=>s.t+JSON.stringify(s.c)+(s.ep&&pm(s).some(m=>m.e)?s.ep:'')+s.b.map(r=>r.map(p=>p?(p.t=='w'?p.k.toUpperCase():p.k):'.').join('')).join('/');
-function save(){if(cfg.mode=='online')return;try{if(over||!H.length)localStorage.removeItem('xchess');else localStorage.setItem('xchess',JSON.stringify({cfg,mv:H.map(x=>x.lm.concat([x.pk||null,x.q?{t:x.q.t,acc:x.q.acc,nag:x.q.nag}:null])),clk,fl}))}catch(_){}}
+function save(){if(cfg.mode=='online')return;try{if(over||!H.length)localStorage.removeItem('xchess');else localStorage.setItem('xchess',JSON.stringify({cfg,mv:H.map(x=>x.lm.concat([x.pk||null,x.q?{t:x.q.t,acc:x.q.acc,nag:x.q.nag}:null])),clk,fl}))}catch(_){} }
 function updRs(){let d=null;try{d=JSON.parse(localStorage.getItem('xchess'))}catch(_){}const b=$('rs');b.hidden=!d;if(d)b.textContent='▶ Continuar partida ('+Math.ceil(d.mv.length/2)+' lances)'}
 function resume(){let d=null;try{d=JSON.parse(localStorage.getItem('xchess'))}catch(_){}if(!d)return;cfg=d.cfg;S=init();cm=null;cmsg='';H=[];sel=null;mv=[];arrows=[];last=null;over=null;thinking=0;rp=1;
 for(const q of d.mv){const m=legal(S).find(x=>x.r==q[0]&&x.f==q[1]&&x.y==q[2]&&x.x==q[3]);if(!m)break;play(m,q[4]);if(q[5]){const hh=H[H.length-1];hh.q=q[5];hh.n+=q[5].nag;hh.e+=q[5].nag}}
@@ -300,7 +300,6 @@ gafe:['Eita! Isso foi uma gafe!','Calma, aluno! Olhe o tabuleiro com atenção.'
 fimV:['Parabéns, aluno! Você me venceu!','Fui derrotado! Estou orgulhoso de você.'],fimD:['Boa partida! Vamos aprender com os erros?','Você jogou bem, mas eu ganhei. Tente a revanche!'],fimE:['Empate! Partida bem equilibrada.','Nenhum de nós cedeu. Muito bem!']};
 const fala=k=>{const a=FL[k];return a[Math.floor(Math.random()*a.length)]};
 function endLine(){if(!falas)return'';const k=over.w?(over.w==cfg.me?'fimV':'fimD'):'fimE';return`<div><i>"${fala(k)}"</i></div>`}
-function togFalas(){falas=falas?0:1;try{localStorage.setItem('xfalas',falas)}catch(_){}render()}
 const wp=c=>50+50*(2/(1+Math.exp(-.0022*Math.max(-2000,Math.min(2000,c))))-1);
 function qs(s,a,B,d){const sp=(s.t=='w'?1:-1)*ev(s.b);if(d==0||sp>=B)return sp>=B?B:sp;if(sp>a)a=sp;
 const L=pm(s).filter(m=>s.b[m.y][m.x]||m.e||m.pr);L.sort((x,y)=>sc(s,y)-sc(s,x));
@@ -460,7 +459,7 @@ function setPF(k,v){PF[k]=(k=='theme'||k=='board')?v:+v;try{localStorage.setItem
 const PG={K:'♚',Q:'♛',R:'♜',B:'♝',N:'♞',P:'♟︎'};
 function dsq(r,c,ch,h){const n='abcdefgh'[c]+(8-r),w=ch&&ch==ch.toUpperCase();return`<i class='${(r+c)%2?'b':'a'}${h.split(' ').includes(n)?' h':''}${ch?(w?' w':' k'):''}'>${ch?PG[ch.toUpperCase()]:''}</i>`}
 function dg(f,h){let o='<div class="mb">';f.split('/').forEach((row,r)=>{let c=0;for(const ch of row){if(ch>='1'&&ch<='8'){for(let k=0;k<+ch;k++)o+=dsq(r,c++,'','')}else o+=dsq(r,c++,ch,'')}});return o+(h?`<svg class='ar2' viewBox='0 0 8 8'>${ar(h)}</svg>`:'')+'</div>'}
-function ar(a){const O=new Set;return a.split(' ').filter(Boolean).map(s=>{const[p,q]=s.split('>'),c0=p.charCodeAt(0)-97,r0=8-p[1],c1=q.charCodeAt(0)-97,r1=8-q[1],x0=c0+.5,y0=r0+.5,x1=c1+.5,y1=r1+.5,kn=Math.abs(r1-r0)*Math.abs(c1-c0)==2;let mx=x0,my=y0;if(kn){if(Math.abs(c1-c0)==2)mx=x1;else my=y1}const dx=x1-mx,dy=y1-my,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,px=-uy,py=ux,ex=x1-ux*.38,ey=y1-uy*.38,tx=kn?mx:x1,ty=kn?my:y1,d0=Math.hypot(tx-x0,ty-y0),sx=x0+(tx-x0)/d0*.25,sy=y0+(ty-y0)/d0*.25;return`<g opacity='.8'><polyline points='${sx},${sy} ${kn?mx+','+my+' ':''}${ex},${ey}' fill='none' stroke='#ff9600' stroke-width='.17' stroke-linecap='round' stroke-linejoin='round'/><polygon fill='#ff9600' points='${x1-ux*.05},${y1-uy*.05} ${ex+px*.27},${ey+py*.27} ${ex-px*.27},${ey-py*.27}'/></g>`}).join('')}
+function ar(a){const O=new Set;return a.split(' ').filter(Boolean).map(s=>{const[p,q]=s.split('>'),c0=p.charCodeAt(0)-97,r0=8-p[1],c1=q.charCodeAt(0)-97,r1=8-q[1],x0=c0+.5,y0=r0+.5,x1=c1+.5,y1=r1+.5,kn=Math.abs(r1-r0)*Math.abs(c1-c0)==2;let mx=x0,my=y0;if(kn){if(Math.abs(c1-c0)==2)mx=x1;else my=y1}const dx=x1-mx,dy=y1-my,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,px=-uy,py=ux,ex=x1-ux*.38,ey=y1-uy*.38,tx=kn?mx:x1,ty=kn?my:y1,d0=Math.hypot(tx-x0,ty-y0),sx=x0+(tx-x0)/d0*.25,sy=y0+(ty-y0)/d0*.25;return`<g opacity='.8'><polyline points='${sx},${sy} ${kn?mx+','+my+' ':''}${ex},${ey}' fill='none' stroke='#ff9600' stroke-width='.17' stroke-linecap='round' stroke-linejoin='round'/><polygon fill='#ff9600' points='${x1-ux*.05},${y1-uy*.05} ${ex+px*.27},${ey+py*.27} ${ex-px*.27},${ey-py*.27}'/></g>`}.join('')}
 function fx(b){return b.map(r=>{let s='',n=0;for(const c of r){if(c){if(n){s+=n;n=0}s+=c}else n++}return s+(n||'')}).join('/')}
 function gmv(b,m){const f=[8-m[1],m.charCodeAt(0)-97],t=[8-m[3],m.charCodeAt(2)-97],p=b[f[0]][f[1]];if((p=='P'||p=='p')&&f[1]!=t[1]&&!b[t[0]][t[1]])b[f[0]][t[1]]=null;if((p=='K'||p=='k')&&Math.abs(t[1]-f[1])==2){const r=t[1]>f[1]?7:0,d=t[1]>f[1]?5:3;b[f[0]][d]=b[f[0]][r];b[f[0]][r]=null}b[t[0]][t[1]]=p;b[f[0]][f[1]]=null}
 const BKL=[];function gm(L,e){BKL.push(L.map(x=>x[0]));const b='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'.split('/').map(r=>[...r].flatMap(c=>c>'0'&&c<'9'?Array(+c).fill(null):[c]));let o='',n=0;for(const[u,s,t]of L){if(s)n++,o+=`<p><b>Passo ${n} · ${s.includes('...')?'Pretas':'Brancas'}: ${s.replace(/^\d+\.(\.\.)?/,'')}</b> ${t}</p>${dg(fx(b),u.slice(0,2)+'>'+u.slice(2,4))}`;gmv(b,u)}return o+`<p><b>Posição final</b> ${e}</p>${dg(fx(b),'')}`}
@@ -479,7 +478,7 @@ const TU=[
 ['fim','🏁','Visão geral: como termina','Fim da partida',`<ul><li><b>Xeque:</b> o rei está atacado. Saia, bloqueie ou capture quem ataca.</li><li><b>Xeque-mate:</b> xeque sem defesa. Quem deu o mate vence.</li><li><b>Afogamento:</b> quem está na vez não está em xeque, mas não tem nenhum lance legal. É empate!</li><li><b>Outros empates:</b> acordo, mesma posição 3 vezes, 50 lances sem captura nem lance de peão, ou material insuficiente (ex: rei contra rei).</li><li><b>Tempo:</b> quem fica sem tempo perde.</li><li><b>Desistir</b> também encerra a partida.</li></ul><div class='nt'>Toque em Próximo para ver cada final da partida, passo a passo.</div>`],
 ['xeq','⚠️','Xeque','Fim da partida',`<p>Xeque é quando o rei está sendo atacado. No lance seguinte, quem está em xeque <b>precisa</b> sair dele.</p>${ps([['Passo 1.','A torre branca ataca o rei preto: é xeque!','4k3/8/8/8/8/8/8/4R2K','e1>e8'],['Saída 1.','Mover o rei para uma casa segura.','4k3/8/8/8/8/8/8/4R2K','e8>d8 e8>f8'],['Saída 2.','Bloquear: colocar uma peça no caminho do ataque.','4k3/8/8/r7/8/8/8/4R2K','a5>e5'],['Saída 3.','Capturar a peça que dá o xeque.','4k3/8/8/8/8/8/8/r3R2K','a1>e1']])}<div class='nt'>Você nunca pode fazer um lance que deixe o seu próprio rei em xeque.</div>`],
 ['xmt','🏆','Xeque-mate','Fim da partida',`<p>Xeque-mate é um xeque <b>sem defesa</b>: o rei não pode sair, bloquear nem capturar. A partida termina e <b>quem deu o mate vence</b>.</p><p><b>Exemplo 1: mate do corredor</b></p>${ps([['Passo 1.','O rei preto está preso atrás dos próprios peões. A torre vai para a8.','6k1/5ppp/8/8/8/8/8/R3K3','a1>a8'],['Pronto!','Xeque-mate! O rei não tem para onde ir e nada bloqueia a torre.','R5k1/5ppp/8/8/8/8/8/4K3','a8>g8']])}<p><b>Exemplo 2: dama e rei</b></p>${ps([['Passo 1.','Seu rei em g6 protege a dama. A dama vai para g7.','7k/5Q2/6K1/8/8/8/8/8','f7>g7'],['Pronto!','Xeque-mate! A dama está protegida pelo rei, então o rei preto não pode capturá-la.','7k/6Q1/6K1/8/8/8/8/8','g7>h8']])}`],
-['afo','🤝','Afogamento','Fim da partida',`<p>Afogamento: quem está na vez <b>não</b> está em xeque, mas também <b>não tem nenhum lance legal</b>. O resultado é <b>empate</b>, mesmo que o outro lado tenha muito mais material.</p>${ps([['Passo 1.','As brancas têm dama contra o rei sozinho e estão ganhando. A dama está em c5.','k7/8/8/2Q5/8/8/8/4K3',''],['Passo 2.','Por distração, as brancas jogam Dc7??','k7/8/8/2Q5/8/8/8/4K3','c5>c7'],['Passo 3.','O rei preto não está em xeque, mas a7, b7 e b8 estão atacadas. Sem lances: afogamento, empate!','k7/2Q5/8/8/8/8/8/4K3','c7>a7 c7>b7 c7>b8']])}<div class='nt'>Quando estiver ganhando, sempre deixe uma casa livre para o rei adversário até dar o mate.</div>`],
+['afo','🤝','Afogamento','Fim da partida',`<p>Afogamento: quem está na vez <b>não</b> está em xeque, mas também <b>não tem nenhum lance legal</b>. O resultado é <b>empate</b>, mesmo que o outro lado tenha muito mais material.</p>${ps([['Passo 1.','As brancas têm dama contra o rei sozinho e estão ganhando. A dama está em c5.','k7/8/8/2Q5/8/8/8/4K3',''],['Passo 2.','Por distração, as brancas jogam Dc7??','k7/8/8/2Q5/8/8/8/4K3','c5>c7'],['Passo 3.','O rei preto não está em xeque, mas a7, b7 e b8 estão atacadas. Sin lances: afogamento, empate!','k7/2Q5/8/8/8/8/8/4K3','c7>a7 c7>b7 c7>b8']])}<div class='nt'>Quando estiver ganhando, sempre deixe uma casa livre para o rei adversário até dar o mate.</div>`],
 ['emp','⚖️','Outros empates','Fim da partida',`<ul><li><b>Acordo:</b> um jogador propõe empate (botão Empate) e o outro aceita.</li><li><b>Repetição:</b> a mesma posição aparece 3 vezes.</li><li><b>50 lances:</b> 50 lances de cada lado sem nenhuma captura e sem lance de peão.</li><li><b>Material insuficiente:</b> não sobrou força para dar mate.</li></ul><p><b>Material insuficiente</b> (nenhum lado consegue dar mate):</p>${ps([['Rei contra rei.','Sozinhos, os reis nunca dão mate.','4k3/8/8/8/8/8/8/4K3',''],['Rei e bispo contra rei.','Só um bispo não basta.','4k3/8/8/8/8/8/8/3BK3',''],['Rei e cavalo contra rei.','Só um cavalo não basta.','4k3/8/8/8/8/8/8/3NK3','']])}`],
 ['tem','⏱️','Tempo e desistência','Fim da partida',`<ul><li><b>Tempo:</b> se o seu relógio chegar a zero, você perde. Escolha o tempo na tela inicial ou jogue sem relógio.</li><li><b>Desistir:</b> use o botão Desistir durante a partida. Nas Configurações você liga ou desliga a confirmação antes de desistir.</li></ul><div class='nt'>Com pouco tempo no relógio, jogue lances simples e seguros: um erro apressado custa mais que um lance mediano.</div>`],
 ['val','⚖️','Valor das peças','Básico',`<ul><li>♟ Peão = 1</li><li>♞ Cavalo = 3</li><li>♝ Bispo = 3</li><li>♜ Torre = 5</li><li>♛ Dama = 9</li><li>♚ Rei: não tem valor, pois não pode ser capturado.</li></ul><p>Use isso para trocar bem: dar uma torre (5) por um cavalo (3) é prejuízo, e ganhar uma dama (9) por uma torre (5) é lucro. Os dois bispos juntos valem um pouco mais, e peões ficam mais fortes perto da promoção.</p>`],
@@ -529,7 +528,7 @@ drawArrows();const ts=fl?'w':'b',bs=fl?'b':'w';$('top').innerHTML=bar(ts);$('bot
 $('top').classList.toggle('on',!over&&S.t==ts);$('bot').classList.toggle('on',!over&&S.t==bs);
 $('st').textContent=over?over.r+(over.w?': vitória das '+(over.w=='w'?'brancas':'pretas'):': empate'):thinking?(cfg.coach?cnm('coach','Professor'):cnm('bot','Bot'))+' pensando…':(ic?'Xeque! ':'')+'Vez das '+(S.t=='w'?'brancas':'pretas');
 const h=$('hist');h.style.visibility=H.length?'visible':'hidden';h.textContent=H.map((x,i)=>(i%2?'':(i/2+1)+'. ')+x.n).join(' ');h.scrollLeft=1e6;
-if(over&&!over.shown){over.shown=1;clearInterval(ti);sfx('end');save();modal(`<b style="font-size:20px">${over.r}</b><div>${over.w?'Vitória das '+(over.w=='w'?'brancas':'pretas'):'Empate'}</div>${cfg.coach?endLine()+coachSum():''}${over.w?'<button class="pr" onclick="rematch()">🔁 Revanche</button>':''}<button onclick="$('md').hidden=true">Ver tabuleiro</button><button onclick="showPgn()">📋 PGN</button><button onclick="home()">🏠 Voltar ao início</button>`,'sm')}}
+if(over&&!over.shown){over.shown=1;clearInterval(ti);sfx('end');save();modal(`<b style="font-size:20px">${over.r}</b><div>${over.w?'Vitória das '+(over.w=='w'?'brancas':'pretas'):'Empate'}</div>${cfg.coach?endLine()+coachSum():''}${over.w?'<button class="pr" onclick="rematch()">🔁 Revanche</button>':''}<button onclick="$(\'md\').hidden=true">Ver tabuleiro</button><button onclick="showPgn()">📋 PGN</button><button onclick="home()">🏠 Voltar ao início</button>`,'sm')}}
 function syncSeg(){document.querySelectorAll('.seg').forEach(g=>{const v=$(g.dataset.for).value;g.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))});const md=$('mode').value;document.querySelectorAll('.bo').forEach(e=>e.hidden=md=='2p'||(md=='online'&&e.classList.contains('bl')));$('pl').hidden=md=='online';$('onl').hidden=md!='online'}
 document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{$(b.parentNode.dataset.for).value=b.dataset.v;syncSeg()});
 
@@ -656,6 +655,90 @@ function applyCU(){
   } else {
     cst.textContent = '';
   }
+  if($('ttl')) $('ttl').textContent = CU.ttl || '♞ Xadrez';
+  if($('sbt')) $('sbt').textContent = CU.sbt || 'Escolha como quer jogar';
+  if($('pl')) $('pl').textContent = CU.pl || '▶ Jogar';
+  if($('btu')) $('btu').textContent = CU.btu || '📚 Tutoriais';
+}
+
+/* ===== MODO CRIADOR ===== */
+function crTap(){
+  const t=Date.now();if(t-crT0>3000)crN=0;crT0=t;crN++;
+  if(crN>=5){crN=0;crOpen()}
+}
+function crOpen(){
+  if(crLock>Date.now()){modal('<b>Muitas tentativas</b><div>Aguarde alguns segundos.</div><button onclick="$(\'md\').hidden=true">OK</button>','sm');return}
+  if(OWNER_HASH&&!crAuth){
+    modal('<b>🔒 Modo Criador</b><div>Digite seu PIN de acesso:</div><input id="crpin" type="password" class="crpin" maxlength="8"><div id="crerr"></div><div class="row"><button class="pr" onclick="crCheck()">Entrar</button><button onclick="$(\'md\').hidden=true">Cancelar</button></div>','sm');
+    setTimeout(()=>$('crpin')&&$('crpin').focus(),50);
+    return;
+  }
+  crBuild();
+}
+function crCheck(){
+  const v=$('crpin').value;
+  if(pinHash(v)==OWNER_HASH){crAuth=1;crFails=0;$('md').hidden=true;crBuild()}
+  else{crFails++;if(crFails>=3)crLock=Date.now()+30000;$('crerr').textContent='PIN incorreto.';}
+}
+function crMsg(m){const e=$('crm');if(e)e.textContent=m}
+function crBuild(){
+  $('cr').hidden=false;$('crp').hidden=false;cssOff=1;applyCU();crRender();
+}
+function crRender(){
+  const b=$('crb');
+  b.innerHTML=`
+    <b>🛠️ Modo Criador</b>
+    <div class="crh">Textos e Aparência</div>
+    <div class="crr"><span>Título principal</span><input type="text" value="${escH(CU.ttl||'♞ Xadrez')}" oninput="cuSet('ttl',this.value)"></div>
+    <div class="crr"><span>Subtítulo</span><input type="text" value="${escH(CU.sbt||'Escolha como quer jogar')}" oninput="cuSet('sbt',this.value)"></div>
+    <div class="crr"><span>Cor principal</span><input type="color" value="${CU.ac||'#4a7c59'}" oninput="cuSet('ac',this.value);document.documentElement.style.setProperty('--ac',this.value)"></div>
+    <div class="crh">CSS Personalizado</div>
+    <textarea rows="4" placeholder="Insira seu CSS personalizado aqui..." oninput="cuSet('css',this.value)">${escH(CU.css||'')}</textarea>
+    <div id="crm"></div>
+    <div class="row"><button onclick="crExport()">Exportar Config</button><button class="dg" onclick="localStorage.removeItem('xcu');loadCU();applyCU();crRender()">Restaurar Padrão</button></div>
+    <button class="pr" onclick="crClose()">Fechar Editor</button>
+  `;
+}
+function crClose(){$('cr').hidden=true;$('crp').hidden=true;cssOff=0;applyCU()}
+function crPrev(){crClose()}
+function crExport(){
+  const json=JSON.stringify(CL,null,2);
+  modal(`<b>Exportar Configuração</b><textarea readonly style="width:100%;height:120px">${escH(json)}</textarea><button onclick="$(\'md\').hidden=true">Fechar</button>`,'sm');
+}
+
+/* ===== TESTE DE ELO ===== */
+const ELO_QUESTIONS = [
+  {q: "Qual destas peças é a única capaz de pular outras peças no tabuleiro?", a: ["Bispo", "Cavalo", "Torre", "Dama"], r: 1},
+  {q: "O que acontece quando um peão chega até a última linha do tabuleiro?", a: ["Ele é eliminado", "Ele é promovido para outra peça", "Ele vira um rei", "Nada acontece"], r: 1},
+  {q: "Como se chama a situação em que o Rei está sob ataque direto e não pode escapar?", a: ["Xeque", "Xeque-mate", "Afogamento", "Roque"], r: 1},
+  {q: "Qual é o valor padrão atribuído a uma Dama em pontos para trocas?", a: ["3 pontos", "5 pontos", "9 pontos", "1 ponto"], r: 2},
+  {q: "O que é o 'Roque'?", a: ["Um lance ilegal", "Um lance especial envolvendo o Rei e a Torre", "Uma captura de peão", "Um tipo de empate"], r: 1}
+];
+let eloIdx = 0, eloScore = 0;
+
+function acctStartTest(){
+  eloIdx = 0; eloScore = 0;
+  showEloQuestion();
+}
+function showEloQuestion(){
+  if(eloIdx >= ELO_QUESTIONS.length){
+    const estimatedElo = 800 + (eloScore * 200);
+    if(currentUser){ currentUser.elo = estimatedElo; saveAccounts(getAccounts()); acctLoginUser(currentUser); }
+    modal(`<b>🎯 Resultado do Teste de Elo</b><div>Você acertou <b>${eloScore}</b> de ${ELO_QUESTIONS.length} perguntas.</div><div>Seu Elo estimado é: <b>${estimatedElo}</b></div><button class="pr" onclick="$(\'md\').hidden=true">Concluir</button>`, 'sm');
+    return;
+  }
+  const item = ELO_QUESTIONS[eloIdx];
+  let h = `<b>🎯 Teste de Elo (Pergunta ${eloIdx+1}/${ELO_QUESTIONS.length})</b><div style="text-align:left;font-size:14px;margin:8px 0">${item.q}</div><div id="acctTest">`;
+  item.a.forEach((opt, idx)=>{
+    h += `<button onclick="answerElo(${idx})">${opt}</button>`;
+  });
+  h += `</div>`;
+  modal(h, 'sm');
+}
+function answerElo(choice){
+  if(choice === ELO_QUESTIONS[eloIdx].r) eloScore++;
+  eloIdx++;
+  showEloQuestion();
 }
 
 /* ===== SITEMA DE CONTA LOCAL ===== */
@@ -748,9 +831,6 @@ function acctEdit(){
     $('acctUser').value = currentUser.name;
     $('acctEmail').value = currentUser.email || '';
   }
-}
-function acctStartTest(){
-  modal('<b>🎯 Teste de Elo</b><div>Ainda em desenvolvimento! Desafie os bots para treinar.</div><button onclick="$(\'md\').hidden=true">OK</button>','sm');
 }
 function checkAutoLogin(){
   try{
