@@ -130,6 +130,7 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 #accountBox .acctbuttons{display:flex;gap:6px}#accountBox .acctbuttons button{flex:1}
 #acctTest{display:flex;flex-direction:column;gap:10px}#acctTest button{text-align:left}
 #acctPassHint{font-size:12px;opacity:.8;line-height:1.35;margin:2px 0 4px;position:relative;display:block;clear:both}#acctPassStrength{height:5px;border-radius:8px;background:#8883;overflow:hidden}#acctPassStrength{display:none!important}#acctPassStrength span{display:block;height:100%;width:0%;transition:width .15s;background:var(--ac)}
+#accountBox{display:none!important}
 </style></head><body>
 <div class="wrap">
 <div id="home" class="card">
@@ -164,7 +165,7 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 <div id="st"></div>
 <div class="stack gm"><button onclick="undo()"><b>↶</b>Desfazer</button><button onclick="fl=!fl;render()"><b>⇅</b>Virar</button><button onclick="draw()"><b>½</b>Empate</button><button class="dg" onclick="resign()"><b>🏳️</b>Desistir</button><button onclick="openCfg()"><b>⚙️</b>Config</button><button onclick="leave()"><b>🏠</b>Menu</button></div></div></div></div>
 <div id="tu" hidden><div class="cfb" id="tub"></div></div>
-<div id="cf" hidden onclick="if(event.target==this)closeCfg()"><div class="cfb"><b id="cft" onclick="crTap()" style="font-size:18px;user-select:none;-webkit-user-select:none">⚙️ Configurações</b><div class="sec"><span>Tema</span><div class="sg" data-pf="theme"><button data-v="auto">Automático</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div><div class="sec"><span>Cor do tabuleiro</span><div class="sg" data-pf="board"><button data-v="verde">Verde</button><button data-v="marrom">Marrom</button><button data-v="azul">Azul</button><button data-v="roxo">Roxo</button></div></div><div class="sec"><span>Tamanho das peças</span><div class="sg" data-pf="ps"><button data-v="0.85">Pequeno</button><button data-v="1">Médio</button><button data-v="1.12">Grande</button></div></div><div class="sec"><span>Coordenadas (a–h, 1–8)</span><div class="sg" data-pf="coord"><button data-v="1">Mostrar</button><button data-v="0">Esconder</button></div></div><div class="sec"><span>Animações</span><div class="sg" data-pf="anim"><button data-v="1">Ligadas</button><button data-v="0">Desligadas</button></div></div><div class="sec"><span>Confirmar antes de desistir</span><div class="sg" data-pf="cr"><button data-v="1">Sim</button><button data-v="0">Não</button></div></div><div class="stack"><button id="sb" onclick="togSnd()">🔊 Som ligado</button><div id="igs" class="stack" style="margin:0"><button id="fa" hidden onclick="togFalas()">💬 Falas</button><button onclick="closeCfg();showPgn()">📋 Ver PGN</button><button id="cn" class="dg" onclick="closeCfg();cancelar()">✖ Cancelar partida</button></div></div><button class="pr" onclick="closeCfg()">Pronto</button></div></div>
+<div id="cf" hidden onclick="if(event.target==this)closeCfg()"><div class="cfb"><b id="cft" style="font-size:18px;user-select:none;-webkit-user-select:none">⚙️ Configurações</b><div class="sec"><span>Tema</span><div class="sg" data-pf="theme"><button data-v="auto">Automático</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div><div class="sec"><span>Cor do tabuleiro</span><div class="sg" data-pf="board"><button data-v="verde">Verde</button><button data-v="marrom">Marrom</button><button data-v="azul">Azul</button><button data-v="roxo">Roxo</button></div></div><div class="sec"><span>Tamanho das peças</span><div class="sg" data-pf="ps"><button data-v="0.85">Pequeno</button><button data-v="1">Médio</button><button data-v="1.12">Grande</button></div></div><div class="sec"><span>Coordenadas (a–h, 1–8)</span><div class="sg" data-pf="coord"><button data-v="1">Mostrar</button><button data-v="0">Esconder</button></div></div><div class="sec"><span>Animações</span><div class="sg" data-pf="anim"><button data-v="1">Ligadas</button><button data-v="0">Desligadas</button></div></div><div class="sec"><span>Confirmar antes de desistir</span><div class="sg" data-pf="cr"><button data-v="1">Sim</button><button data-v="0">Não</button></div></div><div class="stack"><button id="sb" onclick="togSnd()">🔊 Som ligado</button><div id="igs" class="stack" style="margin:0"><button id="fa" hidden onclick="togFalas()">💬 Falas</button><button onclick="closeCfg();showPgn()">📋 Ver PGN</button><button id="cn" class="dg" onclick="closeCfg();cancelar()">✖ Cancelar partida</button></div></div><button class="pr" onclick="closeCfg()">Pronto</button></div></div>
 <div id="cr" hidden><div id="crb"></div></div><button id="crp" hidden onclick="crPrev(0)">✏️ Voltar ao editor</button>
 <div id="md" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -634,27 +635,35 @@ else if(d.t=='ans'&&asked[d.k]){asked[d.k]=0;
 if(d.y)$('md').hidden=true,netDo(d.k);else modal('<b>O oponente recusou.</b><button onclick="$(\'md\').hidden=true">OK</button>','sm')}}
 
 /* ===== MODO CRIADOR: só abre com 5 toques no título das Configurações + PIN ===== */
-const sha=(()=>{const P=[];for(let n=2;P.length<64;n++)if(P.every(p=>n%p))P.push(n);
-const fr=x=>Math.floor((x-Math.floor(x))*4294967296),K=P.map(p=>fr(Math.cbrt(p))),H0=P.slice(0,8).map(p=>fr(Math.sqrt(p))),R=(x,n)=>(x>>>n|x<<(32-n))>>>0;
-return m=>{const b=Array.from(new TextEncoder().encode(m)),L=b.length*8;b.push(128);while(b.length%64!==56)b.push(0);b.push(0,0,0,0,L>>>24&255,L>>>16&255,L>>>8&255,L&255);
-const h=H0.slice(),w=new Array(64);
-for(let o=0;o<b.length;o+=64){for(let i=0;i<16;i++)w[i]=(b[o+4*i]<<24|b[o+4*i+1]<<16|b[o+4*i+2]<<8|b[o+4*i+3])>>>0;
-for(let i=16;i<64;i++){const a=w[i-15],c=w[i-2];w[i]=(w[i-16]+(R(a,7)^R(a,18)^a>>>3)+w[i-7]+(R(c,17)^R(c,19)^c>>>10))>>>0}
-let[a,b2,c,d,e,f,g,k]=h;
-for(let i=0;i<64;i++){const t1=(k+(R(e,6)^R(e,11)^R(e,25))+((e&f)^(~e&g))+K[i]+w[i])>>>0,t2=((R(a,2)^R(a,13)^R(a,22))+((a&b2)^(a&c)^(b2&c)))>>>0;k=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b2;b2=a;a=(t1+t2)>>>0}
-[a,b2,c,d,e,f,g,k].forEach((v,i)=>h[i]=(h[i]+v)>>>0)}
-return h.map(v=>v.toString(16).padStart(8,'0')).join('')}})();
-const pinHash=p=>{let x=sha('xadrez|'+p);for(let i=0;i<3000;i++)x=sha(x+'|'+p);return x};
-const escH=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let CL={},CU={},crAuth=0,crFails=0,crLock=0,crN=0,crT0=0;
-const cnm=(k,d)=>CU['n_'+k]||d,CMODES=['bot','coach','2p','online'],cst=document.createElement('style');
-document.head.appendChild(cst);
-const mergeCU=()=>{CU=Object.assign({},SITE_CONFIG,CL)};
-function loadCU(){try{CL=JSON.parse(localStorage.getItem('xcu'))||{}}catch(_){CL={}}if(typeof CL!='object'||Array.isArray(CL))CL={};mergeCU()}
-function saveCU(){mergeCU();try{if(Object.keys(CL).length)localStorage.setItem('xcu',JSON.stringify(CL));else localStorage.removeItem('xcu')}catch(_){}applyCU()}
-function cuSet(k,v){if(v===''&&k!='logo')delete CL[k];else CL[k]=v;saveCU();if(k=='css'&&$('crm'))crMsg(cssIssues.length?'🚫 '+cssIssues.slice(0,3).join(' · '):'✔ CSS válido')}
-function cuReset(k){delete CL[k];saveCU();crRender()}
-function cuHide(id,on){const a=new Set(CU.hide||[]);on?a.add(id):a.delete(id);CL.hide=[...a];saveCU()}
+<script>
+/* Recuperação do JavaScript principal */
+const escH = s => String(s).replace(/[&<>"']/g, c => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[c]));
+
+const cnm = (k, d) => d;
+
+function applyCU() {}
+function crTap() {}
+
+document.querySelectorAll('.sg button').forEach(b => {
+  b.onclick = () => setPF(b.parentNode.dataset.pf, b.dataset.v);
+});
+
+loadPF();
+applyPF();
+syncPF();
+syncSeg();
+updRs();
+
+$('sb').textContent = snd ? '🔊 Som ligado' : '🔇 Som desligado';
+</script>
+</body>
+</html>
 
 /* ===== ANTI-CHEAT DE CSS: só estilo visual passa; esconder/sobrepor/distorcer o jogo é barrado ===== */
 let cssOff=0,cssIssues=[];
