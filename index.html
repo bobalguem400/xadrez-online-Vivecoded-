@@ -102,6 +102,7 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 #oco{font:700 38px ui-monospace,monospace;letter-spacing:.25em;text-align:center;padding:12px 0 12px .25em;background:var(--bg);border:2px dashed var(--ac);border-radius:10px;user-select:all;-webkit-user-select:all}
 #ost{text-align:center;font-size:14px;min-height:18px}
 #md{z-index:30}
+#game{display:flex;flex-direction:column;box-sizing:border-box;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}#game>.wrap{flex:1;width:100%;box-sizing:border-box}#game .gm{margin-top:auto}#game{position:relative}#game.rot,#md.rot,#cf.rot{transform:rotate(180deg)}.gh.rot{transform:translate(-50%,-50%) rotate(180deg)}#bd.pf .s>span{display:inline-block;rotate:180deg}
 
 #accountBox{background:var(--card);border:1px solid #8883;border-radius:14px;padding:10px;margin:4px 0 8px;display:flex;flex-direction:column;gap:8px}
 #accountBox .acctrow{display:flex;align-items:center;gap:10px}
@@ -142,7 +143,7 @@ h1{font-size:30px;margin:4px 0 0}.sub{margin:0 0 4px;text-align:center;opacity:.
 <div class="bw" style="position:relative"><div id="bd"></div><svg id="ar" viewBox="0 0 8 8" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible"></svg></div>
 <div class="bar" id="bot"></div>
 <div id="st"></div>
-<div class="stack gm"><button onclick="undo()"><b>↶</b>Desfazer</button><button onclick="fl=!fl;render()"><b>⇅</b>Virar</button><button onclick="draw()"><b>½</b>Empate</button><button class="dg" onclick="resign()"><b>🏳️</b>Desistir</button><button onclick="openCfg()"><b>⚙️</b>Config</button><button onclick="leave()"><b>🏠</b>Menu</button></div></div></div></div>
+<div class="stack gm"><button onclick="undo()"><b>↶</b>Desfazer</button><button onclick="flip()"><b>⇅</b>Virar</button><button onclick="draw()"><b>½</b>Empate</button><button class="dg" onclick="resign()"><b>🏳️</b>Desistir</button><button onclick="openCfg()"><b>⚙️</b>Config</button><button onclick="leave()"><b>🏠</b>Menu</button></div></div></div></div>
 <div id="tu" hidden><div class="cfb" id="tub"></div></div>
 <div id="cf" hidden onclick="if(event.target==this)closeCfg()"><div class="cfb"><b style="font-size:18px">⚙️ Configurações</b><div class="sec"><span>Tema</span><div class="sg" data-pf="theme"><button data-v="auto">Automático</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div><div class="sec"><span>Cor do tabuleiro</span><div class="sg" data-pf="board"><button data-v="verde">Verde</button><button data-v="marrom">Marrom</button><button data-v="azul">Azul</button><button data-v="roxo">Roxo</button></div></div><div class="sec"><span>Tamanho das peças</span><div class="sg" data-pf="ps"><button data-v="0.85">Pequeno</button><button data-v="1">Médio</button><button data-v="1.12">Grande</button></div></div><div class="sec"><span>Coordenadas (a–h, 1–8)</span><div class="sg" data-pf="coord"><button data-v="1">Mostrar</button><button data-v="0">Esconder</button></div></div><div class="sec"><span>Animações</span><div class="sg" data-pf="anim"><button data-v="1">Ligadas</button><button data-v="0">Desligadas</button></div></div><div class="sec"><span>Confirmar antes de desistir</span><div class="sg" data-pf="cr"><button data-v="1">Sim</button><button data-v="0">Não</button></div></div><div class="stack"><button id="sb" onclick="togSnd()">🔊 Som ligado</button><div id="igs" class="stack" style="margin:0"><button id="fa" hidden onclick="togFalas()">💬 Falas</button><button onclick="closeCfg();showPgn()">📋 Ver PGN</button><button id="cn" class="dg" onclick="closeCfg();cancelar()">✖ Cancelar partida</button></div></div><button class="pr" onclick="closeCfg()">Pronto</button></div></div>
 <div id="md" hidden></div>
@@ -153,7 +154,7 @@ const N=[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]],D=[[1,1],[1,-1
 const $=i=>document.getElementById(i),inb=(r,c)=>r>=0&&r<8&&c>=0&&c<8,gb=(b,r,c)=>inb(r,c)?b[r][c]:null;
 let cm=null,cmsg='',rp=0,AC=null,snd=1;try{snd=localStorage.getItem('xsnd')==='0'?0:1}catch(_){}
 let falas=1;try{falas=localStorage.getItem('xfalas')==='0'?0:1}catch(_){}
-let na=0,arrows=[],nc=0,suppressNextClick=false,anim=null,S,H=[],sel=null,mv=[],fl=false,cfg={},clk={},last=null,over=null,ti,thinking=0,pend;
+let ROT=false,PRf=false,rv=false,na=0,arrows=[],nc=0,suppressNextClick=false,anim=null,S,H=[],sel=null,mv=[],fl=false,cfg={},clk={},last=null,over=null,ti,thinking=0,pend;
 function init(){const b=Array.from({length:8},()=>Array(8).fill(null)),o='rnbqkbnr';for(let c=0;c<8;c++){b[0][c]={t:'b',k:o[c]};b[1][c]={t:'b',k:'p'};b[6][c]={t:'w',k:'p'};b[7][c]={t:'w',k:o[c]}}return{b,t:'w',c:{wK:1,wQ:1,bK:1,bQ:1},ep:null,hm:0}}
 function att(b,r,c,by){const d=by=='w'?1:-1;
 for(const dc of[-1,1]){const p=gb(b,r+d,c+dc);if(p&&p.t==by&&p.k=='p')return 1}
@@ -208,7 +209,7 @@ function save(){if(cfg.mode=='online')return;try{if(over||!H.length)localStorage
 function updRs(){let d=null;try{d=JSON.parse(localStorage.getItem('xchess'))}catch(_){}const b=$('rs');b.hidden=!d;if(d)b.textContent='▶ Continuar partida ('+Math.ceil(d.mv.length/2)+' lances)'}
 function resume(){let d=null;try{d=JSON.parse(localStorage.getItem('xchess'))}catch(_){}if(!d)return;cfg=d.cfg;S=init();cm=null;cmsg='';H=[];sel=null;mv=[];arrows=[];last=null;over=null;thinking=0;rp=1;
 for(const q of d.mv){const m=legal(S).find(x=>x.r==q[0]&&x.f==q[1]&&x.y==q[2]&&x.x==q[3]);if(!m)break;play(m,q[4]);if(q[5]){const hh=H[H.length-1];hh.q=q[5];hh.n+=q[5].nag;hh.e+=q[5].nag}}
-rp=0;anim=null;clk=d.clk;fl=d.fl;$('home').hidden=true;$('game').hidden=false;$('md').hidden=true;clearInterval(ti);if(cfg.tm)ti=setInterval(tick,100);render();botGo()}
+rp=0;anim=null;clk=d.clk;fl=d.fl;rv=false;if(cfg.mode=='2p')fl=false;$('home').hidden=true;$('game').hidden=false;$('md').hidden=true;clearInterval(ti);if(cfg.tm)ti=setInterval(tick,100);render();botGo()}
 function pgn(){const d=new Date(),dt=d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0'),bt=cfg.mode=='bot',bn=(cfg.coach?'Professor':'Bot')+' (nível '+cfg.lv+')',w=bt?(cfg.me=='w'?'Você':bn):'Jogador 1',b=bt?(cfg.me=='b'?'Você':bn):'Jogador 2',res=over?(over.w?(over.w=='w'?'1-0':'0-1'):'1/2-1/2'):'*';
 return`[Event "Xadrez"]\n[Site "?"]\n[Date "${dt}"]\n[Round "-"]\n[White "${w}"]\n[Black "${b}"]\n[Result "${res}"]\n`+(cfg.tm?`[TimeControl "${cfg.tm}"]\n`:'')+(over?`[Termination "${over.r}"]\n`:'')+'\n'+H.map((x,i)=>(i%2?'':(i/2+1)+'. ')+x.e).join(' ')+' '+res+'\n'}
 function showPgn(){modal(`<b>PGN</b><textarea id="pg" readonly style="width:100%;box-sizing:border-box;height:130px;font:12px ui-monospace,monospace;background:var(--bg);color:var(--fg);border:1px solid #8884;border-radius:8px;padding:6px">${pgn()}</textarea><div class="row"><button onclick="cpPgn(event)">Copiar</button><button onclick="dlPgn()">Baixar .pgn</button></div><button onclick="$('md').hidden=true">Fechar</button>`,'sm')}
@@ -223,15 +224,16 @@ function beep(f,d,t,v,w){if(!snd)return;try{AC=AC||new(window.AudioContext||wind
 function sfx(k){if(k=='move')beep(260,.07,'triangle',.3);else if(k=='cap'){beep(150,.12,'square',.12);beep(90,.14,'triangle',.3,.01)}else if(k=='castle'){beep(260,.07,'triangle',.3);beep(330,.07,'triangle',.3,.1)}else if(k=='promo')[523,659,784].forEach((f,i)=>beep(f,.1,'triangle',.2,i*.07));else if(k=='check'){beep(700,.09,'square',.1);beep(900,.12,'square',.1,.1)}else if(k=='end')[523,415,330,262].forEach((f,i)=>beep(f,.18,'sine',.25,i*.14))}
 function togSnd(){snd=snd?0:1;try{localStorage.setItem('xsnd',snd)}catch(_){}$('sb').textContent=snd?'🔊 Som ligado':'🔇 Som desligado';if(snd)sfx('move')}
 function togFalas(){falas=falas?0:1;try{localStorage.setItem('xfalas',falas)}catch(_){}render()}
-function home(){thinking=0;clearInterval(ti);try{if(typeof netClose==='function'&&cfg.mode=='online')netClose()}catch(_){}rcStop();$('md').hidden=true;$('cf').hidden=true;$('game').hidden=true;$('home').hidden=false;updRs();syncSeg()}
+function home(){ROT=false;['game','md','cf'].forEach(i=>$(i).classList.remove('rot'));thinking=0;clearInterval(ti);try{if(typeof netClose==='function'&&cfg.mode=='online')netClose()}catch(_){}rcStop();$('md').hidden=true;$('cf').hidden=true;$('game').hidden=true;$('home').hidden=false;updRs();syncSeg()}
 function start(){cfg={mode:$('mode').value,lv:+$('lv').value,tm:+$('tm').value*60};if(cfg.mode=='coach'){cfg.mode='bot';cfg.coach=1}let c=$('col').value;cfg.me=c=='r'?(Math.random()<.5?'w':'b'):c;
 begin()}
 function rematch(){if(cfg.mode=='online')return netRematch();if(cfg.mode=='bot')cfg.me=cfg.me=='w'?'b':'w';begin()}
 function begin(){
 if(cfg.mode=='2p') fl = false;
 else fl=(cfg.mode=='bot'||cfg.mode=='online')&&cfg.me=='b';
-S=init();cm=null;cmsg='';H=[];sel=null;mv=[];arrows=[];last=null;over=null;thinking=0;clk={w:cfg.tm,b:cfg.tm};
+rv=false;S=init();cm=null;cmsg='';H=[];sel=null;mv=[];arrows=[];last=null;over=null;thinking=0;clk={w:cfg.tm,b:cfg.tm};
 $('home').hidden=true;$('game').hidden=false;$('md').hidden=true;clearInterval(ti);if(cfg.tm)ti=setInterval(tick,100);render();botGo()}
+function flip(){if(cfg.mode=='2p')rv=!rv;else fl=!fl;render()}
 function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 const cid=s=>s==(fl?'w':'b')?'ct':'cb';
 function tick(){if(over||thinking&&0||netPaused)return;clk[S.t]-=.1;if(clk[S.t]<=0){clk[S.t]=0;const o=S.t=='w'?'b':'w';over=lone(S.b,o)?{w:0,r:'Tempo esgotado (material insuficiente)'}:{w:o,r:'Tempo esgotado'};render();return}if(clk[S.t]<10&&Math.ceil(clk[S.t])<Math.ceil(clk[S.t]+.1)&&(cfg.mode!='bot'||S.t==cfg.me))beep(900,.05,'square',.06);
@@ -250,7 +252,7 @@ const mk=P=>m.ca?(m.ca=='K'?'O-O':'O-O-O'):(mover.k=='p'?(cp?ft[m.f]+'x':''):P[m
 let n=mk(PL),e=mk(PE);
 const L=legal(ns),ck=chk(ns,ns.t),sf=ck?(L.length?'+':'#'):'';n+=sf;e+=sf;if(an){n+=an.nag;e+=an.nag}
 arrows=[];anim=na?[]:[[m.r,m.f,m.y,m.x]];na=0;if(m.ca)anim.push(m.ca=='K'?[m.r,7,m.r,5]:[m.r,0,m.r,3]);H.push({s:S,n,e,cp,lm:[m.r,m.f,m.y,m.x],pk:k,q:an});S=ns;
-if(cfg.mode=='2p') fl = (S.t == 'b');
+if(cfg.mode=='2p') fl=false;
 if(mine){cm=null;cmsg='an'}last=H[H.length-1].lm;sel=null;mv=[];
 const ks=key(ns);if(!L.length)over=ck?{w:mover.t,r:'Xeque-mate'}:{w:0,r:'Afogamento'};else if(H.filter(x=>key(x.s)==ks).length>=2)over={w:0,r:'Tripla repetição'};else if(ns.hm>=100)over={w:0,r:'Regra dos 50 lances'};else if(insuf(ns.b))over={w:0,r:'Material insuficiente'};
 if(rp)return;save();render();if(!over)sfx(ck?'check':m.pr?'promo':m.ca?'castle':cp?'cap':'move');
@@ -258,9 +260,9 @@ if(mine){const hh=H[H.length-1],pc0=ns.b[m.y][m.x];setTimeout(()=>{if(H.indexOf(
 botGo()}
 function botGo(){if(over||cfg.mode!='bot'||S.t==cfg.me)return;thinking=1;$('st').textContent=(cfg.coach?'Professor':'Bot')+' pensando…';setTimeout(()=>{if(!thinking)return;const m=pick();thinking=0;play(m)},250)}
 function undo(){if(thinking||!H.length)return;if(cfg.mode=='online')return netAsk('undo');if(cfg.mode!='bot'){modal('<b>Desfazer o lance?</b><div>Jogador '+(S.t=='w'?'1':'2')+', você aceita desfazer o último lance?</div><div class="row"><button class="pr" onclick="doUndo()">Aceitar</button><button onclick="$(\'md\').hidden=true">Recusar</button></div>','sm');return}doUndo()}
-function doUndo(){if(thinking||!H.length)return;arrows=[];cm=null;cmsg='undo';over=null;$('md').hidden=true;do{S=H.pop().s}while(cfg.mode=='bot'&&S.t!=cfg.me&&H.length);if(cfg.mode=='2p') fl = (S.t == 'b');last=H.length?H[H.length-1].lm:null;sel=null;mv=[];save();render();botGo()}
+function doUndo(){if(thinking||!H.length)return;arrows=[];cm=null;cmsg='undo';over=null;$('md').hidden=true;do{S=H.pop().s}while(cfg.mode=='bot'&&S.t!=cfg.me&&H.length);if(cfg.mode=='2p') fl=false;last=H.length?H[H.length-1].lm:null;sel=null;mv=[];save();render();botGo()}
 function resign(y,rem){if(over)return;if(PF.cr&&!y){modal('<b>Desistir da partida?</b><div>Tem certeza?</div><div class="row"><button class="pr" onclick="resign(1)">Desistir</button><button onclick="$(\'md\').hidden=true">Continuar jogando</button></div>','sm');return}const on=cfg.mode=='online',l=cfg.mode=='bot'||on?(rem&&on?(cfg.me=='w'?'b':'w'):cfg.me):S.t;if(on&&!rem)netSend({t:'resign'});over={w:l=='w'?'b':'w',r:on?(rem?'Oponente desistiu':'Você desistiu'):cfg.mode=='bot'?'Você desistiu':'Jogador '+(l=='w'?'1':'2')+' desistiu'};thinking=0;render()}
-function sqAt(e){const R=$('bd').getBoundingClientRect(),j=Math.floor((e.clientX-R.left)/R.width*8),i=Math.floor((e.clientY-R.top)/R.height*8);if(i<0||i>7||j<0||j>7)return null;return[fl?7-i:i,fl?7-j:j]}
+function sqAt(e){const R=$('bd').getBoundingClientRect();let j=Math.floor((e.clientX-R.left)/R.width*8),i=Math.floor((e.clientY-R.top)/R.height*8);if(i<0||i>7||j<0||j>7)return null;if(ROT){i=7-i;j=7-j}return[fl?7-i:i,fl?7-j:j]}
 const CT={brilhante:['Brilhante','!!','#1baca6','!!'],otima:['Ótima','!','#5c8bb0','!'],melhor:['Melhor','★','#81b64c',''],excelente:['Excelente','👍','#96bc4b',''],boa:['Boa','✓','#a6b78a',''],livro:['Livro','📖','#a88865',''],imprecisao:['Imprecisão','?!','#f0b400','?!'],erro:['Erro','?','#e58f2a','?'],gafe:['Gafe','??','#ca3431','??']};
 const FL={brilhante:['Uau! Isso foi brilhante, aluno!','Que sacrifício lindo! Nem eu esperava.','Isso vai direto pro meu livro de aulas!'],
 otima:['Ótima visão! Era o lance difícil.','Muito bem! Você viu o ponto crítico.','Gostei! Poucos achariam esse.'],
@@ -343,7 +345,7 @@ const makeArrow=(a,b)=>{
 const moveGhost=e=>{
   if(!gh)return;
   gh.style.left=e.clientX+'px';
-  gh.style.top=(e.clientY-(e.pointerType==='touch'?30:0))+'px';
+  gh.style.top=(e.clientY-(e.pointerType==='touch'?30:0)*(ROT?-1:1))+'px';
 };
 const beginPieceDrag=e=>{
   const p=st&&S.b[st[0]][st[1]];
@@ -357,7 +359,7 @@ const beginPieceDrag=e=>{
   const square=bd.children[idx],piece=square&&square.firstChild;
   if(piece)piece.style.opacity=.3;
   gh=document.createElement('div');
-  gh.className='gh p'+p.t;
+  gh.className='gh p'+p.t+(PRf?' rot':'');
   gh.textContent=G[p.k];
   document.body.appendChild(gh);
   moveGhost(e);
@@ -464,14 +466,14 @@ function tuList(){let o='<button class="bk" onclick="closeTu()">← Início</but
 function tuOpen(i){const t=TU[i];$('tub').innerHTML=`<button class="bk" onclick="tuList()">← Tutoriais</button><b class="tt">${t[1]} ${t[2]}</b><div class="tc">${t[4]}</div><div class="two">${i==TU.length-1?'<button class="pr" onclick="closeTu()">Concluído</button>':i>0?`<button onclick="tuOpen(${i-1})">← Anterior</button>`:''}${i<TU.length-1?`<button onclick="tuOpen(${i+1})">Próximo →</button>`:''}</div>`;scrollTo(0,0)}
 function openTu(){tuList();$('home').hidden=true;$('tu').hidden=false;scrollTo(0,0)}
 function closeTu(){$('tu').hidden=true;$('home').hidden=false;scrollTo(0,0)}
-function openCfg(){$('igs').hidden=$('game').hidden;$('cf').hidden=false}
+function openCfg(){$('igs').hidden=$('game').hidden;$('cf').classList.toggle('rot',ROT&&!$('game').hidden);$('cf').hidden=false}
 function closeCfg(){$('cf').hidden=true}
 document.querySelectorAll('.sg button').forEach(b=>b.onclick=()=>setPF(b.parentNode.dataset.pf,b.dataset.v));
-function modal(h,c){$('md').className='op '+(c||'');$('md').innerHTML='<div class="bx">'+h+'</div>';$('md').hidden=false}
+function modal(h,c){$('md').className='op '+(c||'')+(ROT?' rot':'');$('md').innerHTML='<div class="bx">'+h+'</div>';$('md').hidden=false}
 function bar(side){const on=cfg.mode=='online',av=on?(side==cfg.me?'🙂':'👤'):cfg.mode=='bot'?(side==cfg.me?'🙂':(cfg.coach?'🎓':'🤖')):(side=='w'?'⚪':'⚫'),me=on?(side==cfg.me?'Você':'Oponente'):cfg.mode=='bot'?(side==cfg.me?'Você':(cfg.coach?'Professor':'Bot')):(side=='w'?'Jogador 1':'Jogador 2');
 const caps=H.filter(h=>h.cp&&h.cp.t!=side).map(h=>`<span class="p${h.cp.t}">${G[h.cp.k]}</span>`).join('');
 return`<span class="pl"><i class="av">${av}</i><span class="nm">${me}<span class="cap">${caps}</span></span></span>`+(cfg.tm?`<span class="cl" id="${cid(side)}">${fmt(clk[side])}</span>`:'')}
-function render(){$('cn').hidden=cfg.mode!='bot';$('gi').textContent=(cfg.coach?'Professor':cfg.mode=='online'?'🌐 Online':cfg.mode=='bot'?'🤖 Bot':'👥 2 jogadores')+(cfg.mode=='bot'?' · '+['','Fácil','Médio','Difícil'][cfg.lv]:'')+(cfg.tm?' · ⏱ '+cfg.tm/60+' min':'');showCoach();const bd=$('bd');bd.innerHTML='';const k=kp(S.b,S.t),ic=!over&&chk(S,S.t);
+function render(){ROT=false;PRf=cfg.mode=='2p'&&((S.t=='b')!==rv);$('bd').classList.toggle('pf',PRf);$('cn').hidden=cfg.mode!='bot';$('gi').textContent=(cfg.coach?'Professor':cfg.mode=='online'?'🌐 Online':cfg.mode=='bot'?'🤖 Bot':'👥 2 jogadores')+(cfg.mode=='bot'?' · '+['','Fácil','Médio','Difícil'][cfg.lv]:'')+(cfg.tm?' · ⏱ '+cfg.tm/60+' min':'');showCoach();const bd=$('bd');bd.innerHTML='';const k=kp(S.b,S.t),ic=!over&&chk(S,S.t);
 for(let i=0;i<8;i++)for(let j=0;j<8;j++){const r=fl?7-i:i,c=fl?7-j:j,p=S.b[r][c],e=document.createElement('div');
 e.className='s '+((r+c)%2?'d':'l')+(last&&((last[0]==r&&last[1]==c)||(last[2]==r&&last[3]==c))?' lm':'')+(sel&&sel[0]==r&&sel[1]==c?' sel':'')+(ic&&k[0]==r&&k[1]==c?' ck':'');
 const t=mv.find(m=>m.y==r&&m.x==c);if(t)e.className+=(p||t.e)?' cp':' mv';
