@@ -301,7 +301,7 @@ else if(dl<=2)t='excelente';
 else if(dl<=5)t='boa';else if(dl<=10)t='imprecisao';else if(dl<=20)t='erro';else t='gafe';
 if(ix>=0&&dl<=10&&t!='brilhante'&&t!='otima'&&inBook(ix))t='livro';
 const bn=mname(s,bs.m),mate=bs.v>90000&&pl.v<=90000,allow=pl.v<-90000;
-const TX={brilhante:'Um sacrifício que realmente funciona. Poucos jogadores achariam esse lance!',otima:'Quase todos os outros lances piorariam bastante a posição. Você achou o certo.',melhor:'É exatamente o lance que o computador jogaria.',excelente:'Quase tão bom quanto o melhor lance.',boa:'Lance sólido, mas havia algo um pouco melhor: '+bn+'.',livro:(openName(ix)?'Lance de livro: '+openName(ix)+'.':'Lance de livro: faz parte da teoria da abertura.'),
+const TX={brilhante:'Um sacrifício que realmente funciona. Poucos jogadores achariam esse lance!',otima:'Quase todos os outros lances piorariam bastante a posição. Você achou o certo.',melhor:'É exatamente o lance que o computador jogaria.',excelente:'Quase tão bom quanto o melhor lance.',boa:'Lance sólido, mas havia algo um pouco melhor: '+bn+'.',livro:(openName(ix)?'Lance de livro: '+openName(ix)+'.'+(/Gambito/.test(openName(ix))?' É um gambito: um peão oferecido em troca de iniciativa.':''):'Lance de livro: faz parte da teoria da abertura.'),
 imprecisao:'Você deixou escapar um pouco da vantagem. Melhor era '+bn+'.',erro:'Esse lance piora sua posição. Melhor era '+bn+'.',gafe:'Esse lance joga fora a posição. Melhor era '+bn+'.'};
 let txt=TX[t];if(t=='gafe'||t=='erro'){if(allow)txt='Esse lance permite xeque-mate! Melhor era '+bn+'.';else if(mate)txt='Você tinha um xeque-mate forçado: '+bn+'.'}
 {const sn=specialNote(s,m,pk,ix,t,bn);if(sn)txt=(/^Afogamento|^Xeque-mate|^Mate/.test(sn)?'':txt+' ')+sn}
@@ -321,6 +321,59 @@ const OPN=[
 ['Gambito da Dama Recusado','d2d4 d7d5 c2c4 e7e6'],['Defesa Eslava','d2d4 d7d5 c2c4 c7c6'],['Defesa Indiana','d2d4 g8f6'],
 ['Defesa Índia do Rei','d2d4 g8f6 c2c4 g7g6'],['Defesa Nimzo-Indiana','d2d4 g8f6 c2c4 e7e6 b1c3 f8b4'],['Defesa Índia da Dama','d2d4 g8f6 c2c4 e7e6 g1f3 b7b6'],
 ['Defesa Holandesa','d2d4 f7f5'],['Sistema Londres','d2d4 d7d5 c1f4'],['Siciliana invertida','c2c4 e7e5']];
+const OPX=[
+['Jogo dos Quatro Cavalos','e2e4 e7e5 g1f3 b8c6 b1c3 g8f6'],['Defesa Berlim','e2e4 e7e5 g1f3 b8c6 f1b5 g8f6'],['Espanhola, variante da Troca','e2e4 e7e5 g1f3 b8c6 f1b5 a7a6 b5c6'],
+['Espanhola com roque','e2e4 e7e5 g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 e1g1'],['Gambito Schliemann','e2e4 e7e5 g1f3 b8c6 f1b5 f7f5'],['Defesa Philidor','e2e4 e7e5 g1f3 d7d6'],
+['Gambito Letao','e2e4 e7e5 g1f3 f7f5'],['Contra-Gambito Falkbeer','e2e4 e7e5 f2f4 d7d5'],['Abertura do Centro','e2e4 e7e5 d2d4 e5d4 d1d4'],['Gambito Escocês','e2e4 e7e5 d2d4 e5d4 g1f3'],
+['Ataque Cg5 na Defesa dos Dois Cavalos','e2e4 e7e5 g1f3 b8c6 f1c4 g8f6 f3g5'],['Italiana com c3 (Giuoco Pianissimo)','e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 c2c3'],
+['Siciliana Fechada','e2e4 c7c5 b1c3'],['Siciliana Alapin','e2e4 c7c5 c2c3'],['Siciliana Dragão','e2e4 c7c5 g1f3 d7d6 d2d4 c5d4 f3d4 g8f6 b1c3 g7g6'],
+['Siciliana com e6','e2e4 c7c5 g1f3 e7e6'],['Siciliana com Cc6','e2e4 c7c5 g1f3 b8c6'],
+['Francesa, variante do Avanço','e2e4 e7e6 d2d4 d7d5 e4e5'],['Francesa Winawer','e2e4 e7e6 d2d4 d7d5 b1c3 f8b4'],['Francesa, variante da Troca','e2e4 e7e6 d2d4 d7d5 e4d5'],
+['Caro-Kann, variante do Avanço','e2e4 c7c6 d2d4 d7d5 e4e5'],['Escandinava, Cf6','e2e4 d7d5 e4d5 g8f6'],['Defesa Alekhine, ataque ao cavalo','e2e4 g8f6 e4e5'],
+['Defesa Nimzowitsch','e2e4 b8c6'],['Defesa Moderna','e2e4 g7g6'],['Jogo do Peão da Dama, Cf3','d2d4 d7d5 g1f3'],['Ataque Trompowsky','d2d4 g8f6 c1g5'],
+['Defesa Grünfeld','d2d4 g8f6 c2c4 g7g6 b1c3 d7d5'],['Defesa Benoni','d2d4 g8f6 c2c4 c7c5 d4d5 e7e6'],['Gambito Staunton','d2d4 f7f5 e2e4'],
+['Gambito da Dama Recusado, ortodoxo','d2d4 d7d5 c2c4 e7e6 b1c3 g8f6 c1g5 f8e7 e2e3 e8g8'],['Abertura Catalã','d2d4 g8f6 c2c4 e7e6 g2g3'],
+['Abertura Bird','f2f4'],['Abertura Larsen','b2b3'],['Abertura Dunst','b1c3'],['Inglesa Simétrica','c2c4 c7c5'],['Inglesa, Defesa Indiana','c2c4 g8f6']];
+OPX.push(["Gambito do Rei Aceito","e2e4 e7e5 f2f4 e5f4"],
+["Gambito Evans","e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 b2b4"],
+["Gambito Dinamarquês","e2e4 e7e5 d2d4 e5d4 c2c3"],
+["Gambito Smith-Morra","e2e4 c7c5 d2d4 c5d4 c2c3"],
+["Gambito Budapeste","d2d4 g8f6 c2c4 e7e5"],
+["Contra-Gambito Albin","d2d4 d7d5 c2c4 e7e5"],
+["Gambito Benko","d2d4 g8f6 c2c4 c7c5 d4d5 b7b5"],
+["Gambito Blackmar-Diemer","d2d4 d7d5 e2e4"],
+["Giuoco Pianissimo","e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 d2d3"],
+["Gambito Escocês","e2e4 e7e5 g1f3 b8c6 d2d4 e5d4 f1c4"],
+["Abertura Ponziani","e2e4 e7e5 g1f3 b8c6 c2c3"],
+["Gambito Vienense","e2e4 e7e5 b1c3 g8f6 f2f4"],
+["Siciliana Clássica","e2e4 c7c5 g1f3 d7d6 d2d4 c5d4 f3d4 g8f6 b1c3 b8c6"],
+["Siciliana Scheveningen","e2e4 c7c5 g1f3 d7d6 d2d4 c5d4 f3d4 g8f6 b1c3 e7e6"],
+["Siciliana Kan","e2e4 c7c5 g1f3 e7e6 d2d4 c5d4 f3d4 a7a6"],
+["Siciliana Paulsen","e2e4 c7c5 g1f3 e7e6 d2d4 c5d4 f3d4"],
+["Ataque Grand Prix","e2e4 c7c5 f2f4"],
+["Siciliana Rossolimo","e2e4 c7c5 g1f3 b8c6 f1b5"],
+["Siciliana Taimanov","e2e4 c7c5 g1f3 e7e6 d2d4 c5d4 f3d4 b8c6"],
+["Francesa, Variante Tarrasch","e2e4 e7e6 d2d4 d7d5 b1d2"],
+["Francesa, Variante da Troca","e2e4 e7e6 d2d4 d7d5 e4d5 e6d5"],
+["Francesa Clássica","e2e4 e7e6 d2d4 d7d5 b1c3 g8f6"],
+["Caro-Kann, Variante da Troca","e2e4 c7c6 d2d4 d7d5 e4d5 c6d5"],
+["Caro-Kann Clássica","e2e4 c7c6 d2d4 d7d5 b1c3 d5e4 c3e4 c8f5"],
+["Escandinava Clássica","e2e4 d7d5 e4d5 d8d5 b1c3 d5a5"],
+["Defesa Pirc Clássica","e2e4 d7d6 d2d4 g8f6 b1c3 g7g6"],
+["Defesa Alekhine, Variante do Avanço","e2e4 g8f6 e4e5 f6d5 d2d4"],
+["Sistema Colle","d2d4 d7d5 g1f3 g8f6 e2e3"],
+["Londres contra a Índia","d2d4 g8f6 c1f4"],
+["Defesa Bogo-Indiana","d2d4 g8f6 c2c4 e7e6 g1f3 f8b4"],
+["Gambito da Dama Ortodoxo","d2d4 d7d5 c2c4 e7e6 b1c3 g8f6 c1g5 f8e7"],
+["Defesa Semi-Eslava","d2d4 d7d5 c2c4 c7c6 g1f3 g8f6 b1c3 e7e6"],
+["Gambito da Dama, Defesa Tarrasch","d2d4 d7d5 c2c4 e7e6 b1c3 c7c5"],
+["Defesa Holandesa, Muro de Pedra","d2d4 f7f5 g2g3 g8f6 f1g2 e7e6"],
+["Inglesa, Defesa Francesa","c2c4 e7e6"],
+["Abertura Grob","g2g4"],
+["Abertura Polonesa","b2b4"],
+["Abertura Réti, Gambito da Dama","g1f3 d7d5 c2c4"],
+["Abertura Catalã (Réti)","g1f3 d7d5 g2g3"]);
+OPX.forEach(o=>OPN.push(o));
 let OPS=null;
 const uciH=ix=>H.slice(0,ix+1).map(h=>'abcdefgh'[h.lm[1]]+(8-h.lm[0])+'abcdefgh'[h.lm[3]]+(8-h.lm[2]));
 function inBook(ix){if(!OPS){OPS=new Set;OPN.forEach(o=>{const l=o[1].split(' ');for(let i=1;i<=l.length;i++)OPS.add(l.slice(0,i).join(' '))})}return ix>=0&&OPS.has(uciH(ix).join(' '))}
@@ -332,9 +385,11 @@ const mk=kp(ns.b,s.t);if(pc&&pc.k=='q'&&Math.max(Math.abs(mk[0]-m.y),Math.abs(mk
 return'Xeque-mate! Fim da partida.'}
 function specialNote(s,m,pk,ix,t,bn){const ns=ap(s,m,pk),L=legal(ns),ck=chk(ns,ns.t),PN={q:'dama',r:'torre',b:'bispo',n:'cavalo'};
 if(!L.length)return ck?matePat(s,m,ns,ix):((t=='gafe'||t=='erro')?'Afogamento! O rei adversário ficou sem lances e a partida empatou apesar da sua vantagem. Melhor era '+bn+'.':'Afogamento: sem lances legais e sem xeque, a partida empata.');
-if(m.ca)return'Roque! O rei fica protegido e a torre entra em jogo.';
+if(m.ca)return(m.ca=='K'?'Roque curto!':'Roque longo!')+' O rei fica protegido e a torre entra em jogo.';
 if(m.e)return'En passant! A captura especial do peão.';
 if(m.pr)return'Promoção! O peão virou '+PN[pk||'q']+'.';
+const np=ns.b[m.y][m.x];if(np&&np.k=='n'&&['melhor','otima','excelente','boa','brilhante','livro'].includes(t)){let n=0,g=0;for(const[a,e]of N){const q=gb(ns.b,m.y+a,m.x+e);if(q&&q.t!=s.t&&(q.k=='k'||V[q.k]>=320)){n++;if(q.k=='k'||q.k=='q'||q.k=='r')g++}}if(n>=2&&g>=1)return'Garfo de cavalo! Ele ataca duas peças valiosas ao mesmo tempo.'}
+const cap=s.b[m.y][m.x];if(cap&&cap.k=='q'&&s.b[m.r][m.f].k!='q')return'Você capturou a dama adversária!';
 return''}
 function badge(){if(!cm)return'';const p=S.b[cm.r][cm.c];if(!p||p.t!=cm.t||p.k!=cm.k)return'';const x=(fl?7-cm.c:cm.c)+.8,y=(fl?7-cm.r:cm.r)+.2,c=CT[cm.a.t];
 return`<circle cx='${x}' cy='${y}' r='.25' fill='${c[2]}' stroke='#fff' stroke-width='.03'/><text x='${x}' y='${y+.01}' font-size='.28' font-weight='800' fill='#fff' text-anchor='middle' dominant-baseline='central' font-family='system-ui,sans-serif'>${c[1]}</text>`}
@@ -496,7 +551,7 @@ alb:["Responder ao gambito da dama com e5, devolvendo o desafio.","O peão avan�
 ben:["Dar o peão de b5 para abrir colunas na ala da dama.","Torres e bispo atacam por essas colunas, mesmo com menos material.","Exige paciência: a compensação vem com o tempo."],
 bdm:["Oferecer o peão de e4 para ganhar atacando o rei.","Depois de f3, todas as peças brancas apontam para o rei preto.","Exige conhecer as armadilhas: se as pretas se defendem bem, as brancas ficam em desvantagem."]};
 const prin=(id,t)=>PRIN[id]?`<p><b>Princípio ${/^(Abertura|Defesa)/.test(t)?'da':'do'} ${t}</b></p><ul>${PRIN[id].map(x=>'<li>'+x+'</li>').join('')}</ul>`:'';
-function op(id,ic,title,grp,intro,steps,fin,nt){return[id,strong(steps,grp=='Defesas'||['bud','alb','ben'].includes(id)),title,grp,`<p>${intro}</p>${prin(id,title)}${gm(steps.map((x,i)=>{const[u,sn,t]=x.split('|');return[u,(i%2?(i>>1)+1+'...':(i>>1)+1+'.')+sn,t]}),fin)}${nt?`<div class='nt'>${nt}</div>`:''}`]}
+function op(id,ic,title,grp,intro,steps,fin,nt){OPN.push([title,steps.map(x=>x.split('|')[0]).join(' ')]);return[id,strong(steps,grp=='Defesas'||['bud','alb','ben'].includes(id)),title,grp,`<p>${intro}</p>${prin(id,title)}${gm(steps.map((x,i)=>{const[u,sn,t]=x.split('|');return[u,(i%2?(i>>1)+1+'...':(i>>1)+1+'.')+sn,t]}),fin)}${nt?`<div class='nt'>${nt}</div>`:''}`]}
 const TUO=[
 op('ita','♗','Abertura Italiana','Aberturas',"Uma das aberturas mais antigas: desenvolvimento rápido e pressão sobre o ponto fraco f7.",["e2e4|e4|As brancas ocupam o centro e abrem caminho para o bispo e a dama.","e7e5|e5|As pretas respondem do mesmo jeito.","g1f3|Cf3|O cavalo sai e ataca o peão de e5.","b8c6|Cc6|As pretas defendem o peão e desenvolvem o cavalo.","f1c4|Bc4|A marca da Italiana: o bispo mira f7, a casa mais fraca das pretas.","f8c5|Bc5|As pretas igualam: o bispo também mira f2. Esta posição se chama Giuoco Piano."],"Giuoco Piano. Planos: jogar c3 e d4 para ganhar o centro e fazer o roque.","Ótima para iniciantes: lances naturais e ataque rápido."),
 op('esp','♗','Abertura Espanhola (Ruy Lopez)','Aberturas',"A abertura favorita de muitos campeões. O bispo pressiona o cavalo que defende o centro das pretas.",["e2e4|e4|Centro primeiro.","e7e5|e5|As pretas copiam.","g1f3|Cf3|O cavalo ataca e5.","b8c6|Cc6|As pretas defendem o peão.","f1b5|Bb5|O bispo ataca o cavalo que protege e5. É a Espanhola.","a7a6|a6|As pretas perguntam ao bispo o que ele vai fazer (variante Morphy).","b5a4|Ba4|O bispo recua e mantém a pressão.","g8f6|Cf6|As pretas desenvolvem e atacam o peão de e4."],"Posição principal da Espanhola. Em seguida as brancas costumam fazer o roque.","Não ameaça ganhar o peão de e5 de imediato: a pressão é lenta e estratégica."),
@@ -624,77 +679,4 @@ if(navigator.share)navigator.share({title:'♞ Xadrez',text:'Venha jogar xadrez 
 else{try{navigator.clipboard.writeText(u).then(()=>onlSt('Link copiado!'),()=>onlSt(u))}catch(_){onlSt(u)}}}
 function joinRoom(){
 if(!needPeer())return;const code=$('ocd').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
-if(code.length<4){onlSt('Digite o código da sala.');return}
-netClose();isHost=false;roomCode=code;onlSt('Conectando…');
-const p=peer=new Peer();
-p.on('error',e=>{if(peer!==p)return;onlSt('⚠️ Sala não encontrada. Confira o código.')});
-p.on('open',()=>{if(peer!==p)return;const c=p.connect('xadrez-'+code,{reliable:true});net=c;hookConn(c);
-c.on('open',()=>{if(net===c)onlSt('Conectado! Iniciando…')})})}
-function netAsk(k){if(k=='draw'&&over)return;if(!net||!net.open){modal('<b>Sem conexão</b><div>O oponente não está conectado.</div><button onclick="$(\'md\').hidden=true">OK</button>','sm');return}asked[k]=1;netSend({t:'rq',k});modal('<b>Pedido enviado</b><div>Aguardando resposta…</div><button onclick="$(\'md\').hidden=true">OK</button>','sm')}
-function netRematch(){netAsk('rm')}
-function netAns(k,y){netSend({t:'ans',k,y:y?1:0});$('md').hidden=true;if(y)netDo(k)}
-function netDo(k){if(k=='draw')agree();else if(k=='undo')doUndo();else if(k=='rm'){cfg.me=cfg.me=='w'?'b':'w';begin()}}
-function leave(){if(cfg.mode=='online'&&!over&&net)modal(`<b>Sair da partida online?</b><div class="row"><button class="pr" onclick="home()">Sair</button><button onclick="$('md').hidden=true">Ficar</button></div>`,'sm');else home()}
-function netRecv(d){
-if(!d||typeof d!='object')return;
-if(d.t=='cfg'&&!isHost&&$('game').hidden){tok=String(d.tok||'');cfg={mode:'online',lv:2,tm:Math.max(0,+d.tm||0),me:d.me=='b'?'b':'w'};begin();return}
-if(cfg.mode!='online'||$('game').hidden)return;
-if(d.t=='mv'){if(over||S.t==cfg.me)return;
-const m=legal(S).find(x=>x.r==d.r&&x.f==d.f&&x.y==d.y&&x.x==d.x);if(!m)return;
-sel=null;mv=[];play(m,m.pr?(['q','r','b','n'].includes(d.k)?d.k:'q'):undefined)}
-else if(d.t=='resign')resign(1,1);
-else if(d.t=='bye'){if(!over){const c=net;net=null;rcStop();gone('O oponente saiu','Ele encerrou a partida.')}}
-else if(d.t=='sync'&&Array.isArray(d.mv)){
-for(let i=H.length;i<d.mv.length&&i<800;i++){const q=d.mv[i]||[],m=legal(S).find(x=>x.r==q[0]&&x.f==q[1]&&x.y==q[2]&&x.x==q[3]);if(!m)break;sel=null;mv=[];play(m,m.pr?(['q','r','b','n'].includes(q[4])?q[4]:'q'):undefined)}
-if(!isHost&&cfg.tm&&d.clk&&+d.clk.w>=0&&+d.clk.b>=0){clk={w:+d.clk.w,b:+d.clk.b}}render()}
-else if(d.t=='rq'&&RQ[d.k]){
-if(d.k=='rm'&&asked.rm){asked.rm=0;netSend({t:'ans',k:'rm',y:1});netDo('rm');return}
-if((d.k=='draw'&&over)||(d.k=='undo'&&!H.length)||(d.k=='rm'&&!over))return;
-modal(`<b>O oponente ${RQ[d.k]}</b><div>Você aceita?</div><div class="row"><button class="pr" onclick="netAns('${d.k}',1)">Aceitar</button><button onclick="netAns('${d.k}',0)">Recusar</button></div>`,'sm')}
-else if(d.t=='ans'&&asked[d.k]){asked[d.k]=0;
-if(d.y)$('md').hidden=true,netDo(d.k);else modal('<b>O oponente recusou.</b><button onclick="$(\'md\').hidden=true">OK</button>','sm')}}
-
-/* ===== CONTA LOCAL ===== */
-let currentUser = null;
-function getAccounts(){try{return JSON.parse(localStorage.getItem('xaccounts'))||{}}catch(_){return {}}}
-function saveAccounts(accs){try{localStorage.setItem('xaccounts',JSON.stringify(accs))}catch(_){}}
-function acctCheckName(){
-  const u=$('acctUser').value.trim(),accs=getAccounts(),el=$('acctNameCheck');
-  if(!u){el.textContent='';return}
-  if(accs[u.toLowerCase()]){el.className='acct-check bad';el.textContent='Nome em uso.'}
-  else{el.className='acct-check ok';el.textContent='Nome disponível!'}
-}
-function acctRegister(){
-  const u=$('acctUser').value.trim(),p=$('acctPass').value,email=$('acctEmail').value.trim(),file=$('acctPhoto').files[0],msg=$('acctMsg');
-  if(!u){msg.textContent='Digite um usuário.';return}
-  if(p.length<8){msg.textContent='A senha precisa de 8+ caracteres.';return}
-  const accs=getAccounts();
-  if(accs[u.toLowerCase()]){msg.textContent='Usuário já existe!';return}
-  const saveUserData=photoData=>{
-    accs[u.toLowerCase()]={name:u,pass:p,email,photo:photoData||''};
-    saveAccounts(accs);
-    msg.textContent='Conta criada!';
-    acctLoginUser(accs[u.toLowerCase()]);
-  };
-  if(file){
-    const reader=new FileReader();
-    reader.onload=e=>saveUserData(e.target.result);
-    reader.readAsDataURL(file);
-  }else saveUserData('');
-}
-function acctLogin(){
-  const u=$('acctUser').value.trim(),p=$('acctPass').value,msg=$('acctMsg');
-  if(!u||!p){msg.textContent='Preencha usuário e senha.';return}
-  const accs=getAccounts(),user=accs[u.toLowerCase()];
-  if(!user||user.pass!==p){msg.textContent='Usuário ou senha incorretos.';return}
-  msg.textContent='';
-  acctLoginUser(user);
-}
-function acctLoginUser(user){
-  currentUser=user;
-  try{localStorage.setItem('xcurrentuser',user.name)}catch(_){}
-  $('acctName').textContent=user.name;
-  $('acctInfo').textContent='Conta local ativa';
-  if(user.photo)$('acctAvatar').src=user.photo;
-  $('acctForm').hidden=true;
-  $
+if(code.length<4
